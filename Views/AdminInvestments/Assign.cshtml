@@ -1,0 +1,414 @@
+﻿@model MoneyMiners.ViewModels.Admin.AssignInvestmentViewModel
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Assign Investment";
+}
+
+@if (TempData["InvestmentSuccess"] is string successMessage)
+{
+    <div class="alert alert-success mb-4">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        @successMessage
+    </div>
+}
+
+<div class="container-fluid py-4 mm-investment-page">
+
+    <div class="mb-4">
+        <h2 class="mb-1">
+            Assign Investment
+        </h2>
+
+        <p class="text-muted mb-0">
+            Search investor by Investor ID and assign an investment plan.
+        </p>
+    </div>
+
+    <!-- Investor Search -->
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <h5 class="mb-3">
+                Search Investor
+            </h5>
+
+            <form asp-controller="AdminInvestments"
+                  asp-action="Assign"
+                  method="get">
+
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-md-8">
+
+                        <label asp-for="InvestorCode"
+                               class="form-label">
+                        </label>
+
+                        <input asp-for="InvestorCode"
+                               class="form-control"
+                               placeholder="Enter Investor ID" />
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+
+                            <i class="bi bi-search me-1"></i>
+                            Search Investor
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    @if (ViewData["InvestorSearchError"] is string errorMessage)
+    {
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-circle me-2"></i>
+            @errorMessage
+        </div>
+    }
+
+    @if (Model.InvestorAccountID > 0)
+    {
+        <!-- Investor Information -->
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-body">
+
+                <div class="d-flex align-items-center justify-content-between mb-4">
+
+                    <div>
+                        <h5 class="mb-1">
+                            Investor Found
+                        </h5>
+
+                        <small class="text-muted">
+                            Verified investor account
+                        </small>
+                    </div>
+
+                    <span class="badge bg-success">
+                        Verified
+                    </span>
+
+                </div>
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <small class="text-muted">
+                            Investor ID
+                        </small>
+
+                        <div class="fw-bold">
+                            @Model.InvestorCode
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <small class="text-muted">
+                            Investor Name
+                        </small>
+
+                        <div class="fw-bold">
+                            @Model.InvestorName
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <small class="text-muted">
+                            Mobile Number
+                        </small>
+
+                        <div class="fw-bold">
+                            @Model.PhoneNumber
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <small class="text-muted">
+                            Email
+                        </small>
+
+                        <div class="fw-bold">
+                            @(Model.Email ?? "-")
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <small class="text-muted">
+                            Aadhaar
+                        </small>
+
+                        <div class="fw-bold">
+                            XXXX-XXXX-@Model.AadhaarLast4
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Investment Assignment -->
+        <div class="card shadow-sm">
+
+            <div class="card-body">
+
+                <h5 class="mb-4">
+                    Investment Details
+                </h5>
+
+                <form asp-controller="AdminInvestments"
+                      asp-action="Create"
+                      method="post">
+
+                    <input asp-for="InvestorAccountID"
+                           type="hidden" />
+
+                    <input asp-for="InvestorCode"
+                           type="hidden" />
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger">
+                    </div>
+
+                    <div class="row g-3">
+
+                        <!-- Plan -->
+                        <div class="col-md-6">
+
+                            <label asp-for="PlanName"
+                                   class="form-label">
+                            </label>
+
+                            <select asp-for="PlanName"
+                                    class="form-select">
+
+                                <option value="">
+                                    Select Investment Plan
+                                </option>
+
+                                <option value="Silver">
+                                    Silver
+                                </option>
+
+                                <option value="Gold">
+                                    Gold
+                                </option>
+
+                                <option value="Platinum">
+                                    Platinum
+                                </option>
+
+                            </select>
+
+                            <span asp-validation-for="PlanName"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <!-- Amount -->
+                        <div class="col-md-6">
+
+                            <label asp-for="InvestedAmount"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="InvestedAmount"
+                                   class="form-control"
+                                   type="number"
+                                   min="1"
+                                   step="0.01"
+                                   placeholder="Enter investment amount" />
+
+                            <span asp-validation-for="InvestedAmount"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <!-- Start Date -->
+                        <div class="col-md-4">
+
+                            <label asp-for="StartDate"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="StartDate"
+                                   class="form-control" 
+                                   id="StartDate" />
+
+                            <span asp-validation-for="StartDate"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <!-- Duration -->
+                        <div class="col-md-4">
+
+                            <label asp-for="DurationMonths"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="DurationMonths"
+                                   class="form-control"
+                                   type="number"
+                                   min="1"
+                                   max="120"
+                                   id="DurationMonths"
+                                   placeholder="Months" />
+
+                            <span asp-validation-for="DurationMonths"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <!-- End Date -->
+                        <div class="col-md-4">
+
+                            <label asp-for="EndDate"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="EndDate"
+                                   class="form-control" 
+                                   id="EndDate" />
+
+                            <span asp-validation-for="EndDate"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <!-- Payment Reference -->
+                        <div class="col-md-6">
+
+                            <label asp-for="PaymentReference"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="PaymentReference"
+                                   class="form-control"
+                                   placeholder="UTR / Receipt / Reference number" />
+
+                            <span asp-validation-for="PaymentReference"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <!-- Remarks -->
+                        <div class="col-12">
+
+                            <label asp-for="Remarks"
+                                   class="form-label">
+                            </label>
+
+                            <textarea asp-for="Remarks"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Optional remarks"></textarea>
+
+                            <span asp-validation-for="Remarks"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+                        <div class="col-12">
+
+                            <button type="submit"
+                                    class="btn btn-success">
+
+                                <i class="bi bi-check-circle me-1"></i>
+                                Assign Investment
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const startDateInput =
+            document.getElementById("StartDate");
+
+        const durationInput =
+            document.getElementById("DurationMonths");
+
+        const endDateInput =
+            document.getElementById("EndDate");
+
+        function calculateEndDate() {
+
+            if (!startDateInput.value ||
+                !durationInput.value) {
+                return;
+            }
+
+            const months =
+                parseInt(durationInput.value);
+
+            if (months <= 0) {
+                return;
+            }
+
+            const startDate =
+                new Date(startDateInput.value);
+
+            startDate.setMonth(
+                startDate.getMonth() + months);
+
+            const year =
+                startDate.getFullYear();
+
+            const month =
+                String(startDate.getMonth() + 1)
+                    .padStart(2, "0");
+
+            const day =
+                String(startDate.getDate())
+                    .padStart(2, "0");
+
+            endDateInput.value =
+                `${year}-${month}-${day}`;
+        }
+
+        startDateInput.addEventListener(
+            "change",
+            calculateEndDate);
+
+        durationInput.addEventListener(
+            "input",
+            calculateEndDate);
+    </script>
+}

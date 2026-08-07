@@ -1,0 +1,175 @@
+﻿@model MoneyMiners.ViewModels.Admin.AdminCreateViewModel
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Create Admin";
+}
+
+<section class="mm-admin-page">
+    <div class="container-fluid">
+
+        <div class="mm-admin-header">
+            <div>
+                <span class="mm-admin-label">
+                    SUPERADMIN CONTROL
+                </span>
+
+                <h1>Create New Admin</h1>
+
+                <p>
+                    Create a normal administrator account for managing
+                    daily Money Miners operations.
+                </p>
+            </div>
+        </div>
+
+        <div class="mm-admin-table-card">
+            <div class="p-4 p-md-5">
+
+                <form asp-controller="AdminUsers"
+                      asp-action="Create"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger">
+                    </div>
+
+                    <div class="row g-4">
+
+                        <div class="col-md-6">
+                            <label asp-for="Username"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="Username"
+                                   class="form-control"
+                                   autocomplete="username"
+                                   placeholder="Enter admin username"
+                                   autofocus />
+
+                            <span asp-validation-for="Username"
+                                  class="text-danger small">
+                            </span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Email"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="Email"
+                                   class="form-control"
+                                   autocomplete="email"
+                                   placeholder="Enter admin email address" />
+
+                            <span asp-validation-for="Email"
+                                  class="text-danger small">
+                            </span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Password"
+                                   class="form-label">
+                            </label>
+
+                            <div class="input-group">
+                                <input asp-for="Password"
+                                       class="form-control"
+                                       autocomplete="new-password"
+                                       placeholder="Minimum 12 characters"
+                                       id="adminCreatePassword" />
+
+                                <button type="button"
+                                        class="btn mm-admin-reset-button"
+                                        data-password-target="adminCreatePassword">
+                                    Show
+                                </button>
+                            </div>
+
+                            <span asp-validation-for="Password"
+                                  class="text-danger small">
+                            </span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="ConfirmPassword"
+                                   class="form-label">
+                            </label>
+
+                            <div class="input-group">
+                                <input asp-for="ConfirmPassword"
+                                       class="form-control"
+                                       autocomplete="new-password"
+                                       placeholder="Enter password again"
+                                       id="adminCreateConfirmPassword" />
+
+                                <button type="button"
+                                        class="btn mm-admin-reset-button"
+                                        data-password-target="adminCreateConfirmPassword">
+                                    Show
+                                </button>
+                            </div>
+
+                            <span asp-validation-for="ConfirmPassword"
+                                  class="text-danger small">
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-3 mt-5">
+
+                        <a asp-controller="AdminUsers"
+                           asp-action="Index"
+                           class="mm-admin-reset-button">
+                            ← Cancel
+                        </a>
+
+                        <button type="submit"
+                                class="mm-admin-filter-button">
+                            Create Admin Account
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document
+            .querySelectorAll("[data-password-target]")
+            .forEach(function(button) {
+                button.addEventListener("click", function() {
+                    const inputId =
+                        button.getAttribute(
+                            "data-password-target");
+
+                    const input =
+                        document.getElementById(inputId);
+
+                    const passwordIsHidden =
+                        input.type === "password";
+
+                    input.type =
+                        passwordIsHidden
+                            ? "text"
+                            : "password";
+
+                    button.textContent =
+                        passwordIsHidden
+                            ? "Hide"
+                            : "Show";
+                });
+            });
+    </script>
+}

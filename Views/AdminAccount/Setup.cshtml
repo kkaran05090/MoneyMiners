@@ -1,0 +1,197 @@
+﻿@model MoneyMiners.ViewModels.Admin.AdminSetupViewModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Initial Admin Setup";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - Money Miners
+    </title>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/theme.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/admin-login.css"
+          asp-append-version="true" />
+</head>
+
+<body class="mm-admin-login-page">
+
+    <main class="mm-admin-login-wrapper">
+
+        <section class="mm-admin-login-card">
+
+            <div class="mm-admin-login-brand">
+                <div class="mm-admin-login-logo">
+                    MM
+                </div>
+
+                <div>
+                    <span>Money Miners</span>
+                    <small>Initial Administration Setup</small>
+                </div>
+            </div>
+
+            <div class="mm-admin-login-heading">
+                <span class="mm-admin-login-label">
+                    FIRST-TIME SETUP
+                </span>
+
+                <h1>Create SuperAdmin</h1>
+
+                <p>
+                    Create the first authorized administrator account.
+                    This setup page will automatically close after the
+                    account is created.
+                </p>
+            </div>
+
+            <form asp-controller="AdminAccount"
+                  asp-action="Setup"
+                  method="post"
+                  class="mm-admin-login-form">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="mm-admin-login-validation">
+                </div>
+
+                <div class="mm-admin-login-field">
+                    <label asp-for="Username"></label>
+
+                    <input asp-for="Username"
+                           class="form-control"
+                           autocomplete="username"
+                           placeholder="Choose an admin username"
+                           autofocus />
+
+                    <span asp-validation-for="Username"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="mm-admin-login-field">
+                    <label asp-for="Email"></label>
+
+                    <input asp-for="Email"
+                           class="form-control"
+                           autocomplete="email"
+                           placeholder="Enter admin email address" />
+
+                    <span asp-validation-for="Email"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="mm-admin-login-field">
+                    <label asp-for="Password"></label>
+
+                    <div class="mm-admin-password-wrapper">
+                        <input asp-for="Password"
+                               class="form-control"
+                               autocomplete="new-password"
+                               placeholder="Minimum 12 characters"
+                               id="setupPassword" />
+
+                        <button type="button"
+                                class="mm-admin-password-toggle"
+                                data-password-target="setupPassword"
+                                aria-label="Show password">
+                            Show
+                        </button>
+                    </div>
+
+                    <span asp-validation-for="Password"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="mm-admin-login-field">
+                    <label asp-for="ConfirmPassword"></label>
+
+                    <div class="mm-admin-password-wrapper">
+                        <input asp-for="ConfirmPassword"
+                               class="form-control"
+                               autocomplete="new-password"
+                               placeholder="Enter password again"
+                               id="setupConfirmPassword" />
+
+                        <button type="button"
+                                class="mm-admin-password-toggle"
+                                data-password-target="setupConfirmPassword"
+                                aria-label="Show password">
+                            Show
+                        </button>
+                    </div>
+
+                    <span asp-validation-for="ConfirmPassword"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <button type="submit"
+                        class="mm-admin-login-button">
+                    Create SuperAdmin securely
+                </button>
+
+            </form>
+
+            <p class="mm-admin-login-footer">
+                The password will be securely hashed before storage.
+            </p>
+
+        </section>
+
+    </main>
+
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+            document
+                .querySelectorAll("[data-password-target]")
+                .forEach(function(button) {
+                    button.addEventListener(
+                        "click",
+                        function() {
+                            const inputId =
+                                button.getAttribute(
+                                    "data-password-target");
+
+                            const input =
+                                document.getElementById(inputId);
+
+                            const isHidden =
+                                input.type === "password";
+
+                            input.type =
+                                isHidden ? "text" : "password";
+
+                            button.textContent =
+                                isHidden ? "Hide" : "Show";
+
+                            button.setAttribute(
+                                "aria-label",
+                                isHidden
+                                    ? "Hide password"
+                                    : "Show password");
+                        });
+                });
+    </script>
+
+</body>
+</html>

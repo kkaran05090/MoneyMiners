@@ -1,0 +1,367 @@
+﻿@using Microsoft.AspNetCore.Authentication
+
+@{
+    var investorAuthentication =
+        await Context.AuthenticateAsync("InvestorCookie");
+
+    var isInvestorLoggedIn =
+        investorAuthentication.Succeeded &&
+        investorAuthentication.Principal?
+            .IsInRole("Investor") == true;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - Money Miners
+    </title>
+
+    <script type="importmap"></script>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/theme.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/layout.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/home.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/investor-auth.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/investor-dashboard.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/MoneyMiners.styles.css"
+          asp-append-version="true" />
+</head>
+
+<body>
+
+    <header class="mm-header">
+
+        <nav class="navbar navbar-expand-lg navbar-dark mm-navbar">
+
+            <div class="container">
+
+                <!-- Brand -->
+                <a class="navbar-brand mm-brand"
+                   asp-controller="Home"
+                   asp-action="Index">
+
+                    <img src="~/images/branding/money-miners-logo.png"
+                         asp-append-version="true"
+                         alt="Money Miners"
+                         class="mm-logo" />
+
+                    <span class="mm-brand-wordmark">
+
+                        <span class="mm-brand-line">
+
+                            M<span class="mm-money-o">
+                            O<span>$</span>
+                        </span>NEY
+
+                    </span>
+
+                    <span class="mm-brand-line">
+                        MINERS
+                    </span>
+
+                </span>
+
+            </a>
+
+            <!-- Mobile Navigation Button -->
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#moneyMinersNavbar"
+                    aria-controls="moneyMinersNavbar"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+            <!-- Navigation -->
+            <div class="collapse navbar-collapse"
+                 id="moneyMinersNavbar">
+
+                <ul class="navbar-nav mx-lg-auto">
+
+                    <li class="nav-item">
+
+                        <a class="nav-link active"
+                           asp-controller="Home"
+                           asp-action="Index">
+
+                            Home
+
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item">
+
+                        <a class="nav-link"
+                           asp-controller="Home"
+                           asp-action="Index"
+                           asp-fragment="about">
+
+                            About
+
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item">
+
+                        <a class="nav-link"
+                           asp-controller="Home"
+                           asp-action="Index"
+                           asp-fragment="plans">
+
+                            Investment Plans
+
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item">
+
+                        <a class="nav-link"
+                           asp-controller="Home"
+                           asp-action="Index"
+                           asp-fragment="how-it-works">
+
+                            How It Works
+
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item">
+
+                        <a class="nav-link"
+                           asp-controller="Home"
+                           asp-action="Index"
+                           asp-fragment="faq">
+
+                            FAQ
+
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item">
+
+                        <a class="nav-link"
+                           asp-controller="Home"
+                           asp-action="Index"
+                           asp-fragment="contact">
+
+                            Contact
+
+                        </a>
+
+                    </li>
+
+                </ul>
+
+                <!-- Public Investor Actions -->
+                <div class="mm-nav-actions">
+
+                    @if (isInvestorLoggedIn)
+                    {
+                        <a asp-controller="InvestorDashboard"
+                           asp-action="Index"
+                           class="btn mm-login-btn">
+
+                            <i class="bi bi-speedometer2"></i>
+                            Dashboard
+
+                        </a>
+
+                        <form asp-controller="InvestorAccount"
+                              asp-action="Logout"
+                              method="post"
+                              class="m-0">
+
+                            <button type="submit"
+                                    class="btn mm-register-btn">
+
+                                Logout
+                                <i class="bi bi-box-arrow-right"></i>
+
+                            </button>
+
+                        </form>
+                    }
+                    else
+                    {
+                        <a asp-controller="InvestorAccount"
+                           asp-action="Login"
+                           class="btn mm-login-btn">
+
+                            <i class="bi bi-person-circle"></i>
+                            Investor Login
+
+                        </a>
+
+                        <a asp-controller="InvestorAccount"
+                           asp-action="CreateAccount"
+                           class="btn mm-register-btn">
+
+                            Create Account
+                            <i class="bi bi-arrow-up-right"></i>
+
+                        </a>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+</header>
+
+<main role="main">
+    @RenderBody()
+</main>
+
+<footer class="mm-footer">
+
+    <div class="container">
+
+        <div class="mm-footer-main">
+
+            <div class="mm-footer-brand">
+
+                <a class="mm-footer-logo"
+                   asp-controller="Home"
+                   asp-action="Index">
+
+                    <img src="~/images/branding/money-miners-logo.png"
+                         asp-append-version="true"
+                         alt="Money Miners" />
+
+                    <span>Money Miners</span>
+
+                </a>
+
+                <p>
+                    Secure investment access, transparent reporting
+                    and dedicated investor support.
+                </p>
+
+            </div>
+
+            <div class="mm-footer-links">
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   asp-fragment="about">
+
+                    About
+
+                </a>
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   asp-fragment="plans">
+
+                    Investment Plans
+
+                </a>
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   asp-fragment="how-it-works">
+
+                    How It Works
+
+                </a>
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   asp-fragment="faq">
+
+                    FAQ
+
+                </a>
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   asp-fragment="contact">
+
+                    Contact
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="mm-footer-bottom">
+
+            <span>
+                &copy; 2026 Money Miners. All rights reserved.
+            </span>
+
+            <a asp-controller="Home"
+               asp-action="Privacy">
+
+                Privacy Policy
+
+            </a>
+
+        </div>
+
+    </div>
+
+</footer>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="~/js/site.js"
+        asp-append-version="true">
+</script>
+
+@await RenderSectionAsync(
+    "Scripts",
+    required: false)
+
+</body>
+
+</html>

@@ -1,0 +1,169 @@
+﻿@model MoneyMiners.ViewModels.Admin.AdminLoginViewModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Admin Login";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - Money Miners
+    </title>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/theme.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/admin-login.css"
+          asp-append-version="true" />
+</head>
+
+<body class="mm-admin-login-page">
+
+    <main class="mm-admin-login-wrapper">
+
+        <section class="mm-admin-login-card">
+
+            <div class="mm-admin-login-brand">
+                <div class="mm-admin-login-logo">
+                    MM
+                </div>
+
+                <div>
+                    <span>Money Miners</span>
+                    <small>Secure Administration</small>
+                </div>
+            </div>
+
+            <div class="mm-admin-login-heading">
+                <span class="mm-admin-login-label">
+                    ADMIN ACCESS
+                </span>
+
+                <h1>Welcome back</h1>
+
+                <p>
+                    Sign in with your authorized administrator
+                    account to continue.
+                </p>
+            </div>
+
+            <form asp-controller="AdminAccount"
+                  asp-action="Login"
+                  method="post"
+                  class="mm-admin-login-form">
+
+                @Html.AntiForgeryToken()
+
+                <input asp-for="ReturnUrl"
+                       type="hidden" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="mm-admin-login-validation">
+                </div>
+
+                <div class="mm-admin-login-field">
+                    <label asp-for="LoginIdentifier">
+                    </label>
+
+                    <input asp-for="LoginIdentifier"
+                           class="form-control"
+                           autocomplete="username"
+                           placeholder="Enter username or email"
+                           autofocus />
+
+                    <span asp-validation-for="LoginIdentifier"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="mm-admin-login-field">
+                    <label asp-for="Password">
+                    </label>
+
+                    <div class="mm-admin-password-wrapper">
+                        <input asp-for="Password"
+                               class="form-control"
+                               autocomplete="current-password"
+                               placeholder="Enter password"
+                               id="adminPassword" />
+
+                        <button type="button"
+                                class="mm-admin-password-toggle"
+                                id="toggleAdminPassword"
+                                aria-label="Show password">
+                            Show
+                        </button>
+                    </div>
+
+                    <span asp-validation-for="Password"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="mm-admin-login-options">
+                    <label class="mm-admin-remember">
+                        <input asp-for="RememberMe"
+                               class="form-check-input" />
+
+                        <span>
+                            @Html.DisplayNameFor(
+                                model => model.RememberMe)
+                        </span>
+                    </label>
+                </div>
+
+                <button type="submit"
+                        class="mm-admin-login-button">
+                    Sign in securely
+                </button>
+            </form>
+
+            <p class="mm-admin-login-footer">
+                Protected area. Unauthorized access is prohibited.
+            </p>
+
+        </section>
+
+    </main>
+
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+            const passwordInput =
+                document.getElementById("adminPassword");
+
+            const toggleButton =
+                document.getElementById("toggleAdminPassword");
+
+            toggleButton.addEventListener("click", function() {
+                const passwordIsHidden =
+                    passwordInput.type === "password";
+
+                passwordInput.type =
+                    passwordIsHidden ? "text" : "password";
+
+                toggleButton.textContent =
+                    passwordIsHidden ? "Hide" : "Show";
+
+                toggleButton.setAttribute(
+                    "aria-label",
+                    passwordIsHidden
+                        ? "Hide password"
+                        : "Show password");
+            });
+    </script>
+
+</body>
+</html>

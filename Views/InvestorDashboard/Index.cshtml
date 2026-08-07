@@ -1,0 +1,482 @@
+﻿@model MoneyMiners.ViewModels.Investor.InvestorDashboardViewModel
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Investor Dashboard";
+
+    var phoneNumber =
+        User.FindFirst("PhoneNumber")?.Value
+        ?? "Not available";
+}
+
+<div class="mm-investor-dashboard-page">
+
+    <header class="mm-investor-dashboard-header">
+
+        <div>
+            <span class="mm-investor-dashboard-kicker">
+                Secure Investor Portal
+            </span>
+
+            <h1 class="mm-investor-dashboard-title">
+                Welcome, @Model.DisplayName
+            </h1>
+
+            <p class="mm-investor-dashboard-copy">
+                Review your investor account, active plans,
+                investment history and payment status.
+            </p>
+        </div>
+
+        <div class="mm-investor-code-card">
+            <small>Investor ID</small>
+            <strong>@Model.InvestorCode</strong>
+        </div>
+
+    </header>
+
+    <!-- Summary -->
+    <div class="row g-4">
+
+        <div class="col-md-6 col-xl-3">
+            <article class="mm-investor-summary-card">
+
+                <div class="mm-investor-summary-content">
+
+                    <div>
+                        <span class="mm-investor-summary-label">
+                            Account Status
+                        </span>
+
+                        <h2 class="mm-investor-summary-value is-success">
+                            Active
+                        </h2>
+                    </div>
+
+                    <div class="mm-investor-summary-icon">
+                        <i class="bi bi-patch-check-fill"></i>
+                    </div>
+
+                </div>
+
+            </article>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <article class="mm-investor-summary-card">
+
+                <div class="mm-investor-summary-content">
+
+                    <div>
+                        <span class="mm-investor-summary-label">
+                            Verified Mobile
+                        </span>
+
+                        <h2 class="mm-investor-summary-value">
+                            +91 @phoneNumber
+                        </h2>
+                    </div>
+
+                    <div class="mm-investor-summary-icon">
+                        <i class="bi bi-phone-fill"></i>
+                    </div>
+
+                </div>
+
+            </article>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <article class="mm-investor-summary-card">
+
+                <div class="mm-investor-summary-content">
+
+                    <div>
+                        <span class="mm-investor-summary-label">
+                            Active Plans
+                        </span>
+
+                        <h2 class="mm-investor-summary-value">
+                            @Model.ActivePlansCount
+                        </h2>
+                    </div>
+
+                    <div class="mm-investor-summary-icon">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+
+                </div>
+
+            </article>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <article class="mm-investor-summary-card">
+
+                <div class="mm-investor-summary-content">
+
+                    <div>
+                        <span class="mm-investor-summary-label">
+                            Total Invested
+                        </span>
+
+                        <h2 class="mm-investor-summary-value">
+                            ₹@Model.TotalInvestedAmount.ToString("N2")
+                        </h2>
+                    </div>
+
+                    <div class="mm-investor-summary-icon">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+
+                </div>
+
+            </article>
+        </div>
+
+    </div>
+
+
+    <!-- Active Investments -->
+    @if (Model.ActiveInvestments.Count == 0)
+    {
+        <section class="mm-investor-portfolio-card">
+
+            <div class="mm-investor-empty-state">
+
+                <div class="mm-investor-empty-icon">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+
+                <span class="mm-investor-empty-kicker">
+                    Investment Portfolio
+                </span>
+
+                <h2 class="mm-investor-empty-title">
+                    No Active Plan
+                </h2>
+
+                <p class="mm-investor-empty-copy">
+                    You currently do not have an active investment plan.
+                    After your offline payment and plan verification are
+                    completed by Money Miners, your plan name, invested
+                    amount, duration and payment status will appear here.
+                </p>
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   asp-fragment="plans"
+                   class="btn mm-investor-primary-button
+                    d-inline-flex align-items-center gap-2">
+
+                    <i class="bi bi-stars"></i>
+                    Explore Investment Plans
+
+                </a>
+
+            </div>
+
+        </section>
+    }
+    else
+    {
+        <section class="mm-investor-portfolio-card">
+
+            <div class="mm-investor-info-header mb-4">
+
+                <div class="mm-investor-info-icon">
+                    <i class="bi bi-briefcase-fill"></i>
+                </div>
+
+                <div>
+                    <h2>Active Investments</h2>
+
+                    <p>
+                        Your currently active Money Miners investments
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="row g-4">
+
+                @foreach (var investment in Model.ActiveInvestments)
+                {
+                    <div class="col-lg-6">
+
+                        <article class="mm-investor-info-card h-100">
+
+                            <div class="d-flex
+                                justify-content-between
+                                align-items-start
+                                gap-3
+                                mb-4">
+
+                                <div>
+
+                                    <span class="mm-investor-dashboard-kicker">
+                                        @investment.PlanName Plan
+                                    </span>
+
+                                    <h2 class="mb-1">
+                                        ₹@investment.InvestedAmount.ToString("N2")
+                                    </h2>
+
+                                    <small>
+                                        @investment.InvestmentCode
+                                    </small>
+
+                                </div>
+
+                                <span class="badge bg-success">
+                                    @investment.Status
+                                </span>
+
+                            </div>
+
+                            <div class="row g-3">
+
+                                <div class="col-6">
+
+                                    <span class="mm-investor-summary-label">
+                                        Start Date
+                                    </span>
+
+                                    <div class="fw-semibold mt-1">
+                                        @investment.StartDate.ToString("dd MMM yyyy")
+                                    </div>
+
+                                </div>
+
+                                <div class="col-6">
+
+                                    <span class="mm-investor-summary-label">
+                                        End Date
+                                    </span>
+
+                                    <div class="fw-semibold mt-1">
+                                        @investment.EndDate.ToString("dd MMM yyyy")
+                                    </div>
+
+                                </div>
+
+                                <div class="col-6">
+
+                                    <span class="mm-investor-summary-label">
+                                        Duration
+                                    </span>
+
+                                    <div class="fw-semibold mt-1">
+                                        @investment.DurationMonths Months
+                                    </div>
+
+                                </div>
+
+                                <div class="col-6">
+
+                                    <span class="mm-investor-summary-label">
+                                        Investment ID
+                                    </span>
+
+                                    <div class="fw-semibold mt-1">
+                                        @investment.InvestmentCode
+                                    </div>
+
+                                </div>
+
+                                @if (!string.IsNullOrWhiteSpace(
+                                    investment.PaymentReference))
+                                {
+                                    <div class="col-12">
+
+                                        <span class="mm-investor-summary-label">
+                                            Payment Reference
+                                        </span>
+
+                                        <div class="fw-semibold mt-1">
+                                            @investment.PaymentReference
+                                        </div>
+
+                                    </div>
+                                }
+
+                            </div>
+
+                        </article>
+
+                    </div>
+                }
+
+            </div>
+
+        </section>
+    }
+
+
+    <!-- Bottom Section -->
+    <div class="row g-4">
+
+        <section class="mm-investor-info-card h-100">
+
+            <div class="mm-investor-info-header">
+
+                <div class="mm-investor-info-icon">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+
+                <div>
+                    <h2>Investment History</h2>
+
+                    <p>
+                        Completed, closed and cancelled investments
+                    </p>
+                </div>
+
+            </div>
+
+            @if (Model.InvestmentHistory.Count == 0)
+            {
+                <div class="mm-investor-info-empty">
+                    No investment history is available.
+                </div>
+            }
+            else
+            {
+                <div class="d-flex flex-column gap-3 mt-4">
+
+                    @foreach (var investment in Model.InvestmentHistory)
+                    {
+                        <div class="border rounded-3 p-3">
+
+                            <div class="d-flex
+                                justify-content-between
+                                align-items-start
+                                gap-3
+                                mb-3">
+
+                                <div>
+                                    <strong class="d-block">
+                                        @investment.PlanName Plan
+                                    </strong>
+
+                                    <small class="text-muted">
+                                        @investment.InvestmentCode
+                                    </small>
+                                </div>
+
+                                <span class="badge
+                                    @(investment.Status == "Settled"
+                                        ? "bg-success"
+                                        : investment.Status == "Closed"
+                                            ? "bg-secondary"
+                                            : "bg-danger")">
+
+                                    @investment.Status
+
+                                </span>
+
+                            </div>
+
+                            <div class="row g-3">
+
+                                <div class="col-6">
+
+                                    <small class="mm-investor-summary-label">
+                                        Amount
+                                    </small>
+
+                                    <div class="fw-semibold mt-1">
+                                        ₹@investment.InvestedAmount.ToString("N2")
+                                    </div>
+
+                                </div>
+
+                                <div class="col-6">
+
+                                    <small class="mm-investor-summary-label">
+                                        Duration
+                                    </small>
+
+                                    <div class="fw-semibold mt-1">
+                                        @investment.DurationMonths Months
+                                    </div>
+
+                                </div>
+
+                                <div class="col-6">
+
+                                    <small class="mm-investor-summary-label">
+                                        Start Date
+                                    </small>
+
+                                    <div class="fw-semibold mt-1">
+                                        @investment.StartDate.ToString("dd MMM yyyy")
+                                    </div>
+
+                                </div>
+
+                                <div class="col-6">
+
+                                    <small class="mm-investor-summary-label">
+                                        End Date
+                                    </small>
+
+                                    <div class="fw-semibold mt-1">
+                                        @investment.EndDate.ToString("dd MMM yyyy")
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+            }
+
+        </section>
+
+        <div class="col-lg-6">
+
+            <section class="mm-investor-info-card">
+
+                <div class="mm-investor-info-header">
+
+                    <div class="mm-investor-info-icon">
+                        <i class="bi bi-headset"></i>
+                    </div>
+
+                    <div>
+                        <h2>Need Assistance?</h2>
+
+                        <p>
+                            Contact Money Miners support
+                        </p>
+                    </div>
+
+                </div>
+
+                <p class="mm-investor-info-copy">
+                    For plan selection, offline payment,
+                    account verification or other assistance,
+                    contact the Money Miners team.
+                </p>
+
+                <a asp-controller="Home"
+                   asp-action="Contact"
+                   class="btn mm-investor-secondary-button
+                    d-inline-flex align-items-center gap-2">
+
+                    <i class="bi bi-chat-dots-fill"></i>
+                    Contact Support
+
+                </a>
+
+            </section>
+
+        </div>
+
+    </div>
+
+</div>

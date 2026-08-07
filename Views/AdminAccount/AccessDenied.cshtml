@@ -1,0 +1,76 @@
+﻿@{
+    Layout = null;
+    ViewData["Title"] = "Access Denied";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - Money Miners
+    </title>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/theme.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/admin-login.css"
+          asp-append-version="true" />
+</head>
+
+<body class="mm-admin-login-page">
+
+    <main class="mm-admin-login-wrapper">
+
+        <section class="mm-admin-login-card">
+
+            <div class="mm-admin-login-brand">
+                <div class="mm-admin-login-logo">
+                    MM
+                </div>
+
+                <div>
+                    <span>Money Miners</span>
+                    <small>Secure Administration</small>
+                </div>
+            </div>
+
+            <div class="mm-admin-login-heading">
+                <span class="mm-admin-login-label">
+                    AUTHORIZATION ERROR
+                </span>
+
+                <h1>Access Denied</h1>
+
+                <p>
+                    Aapke account ke paas is page ko access
+                    karne ki permission nahi hai.
+                </p>
+            </div>
+
+            <a asp-controller="Admin"
+               asp-action="Index"
+               class="mm-admin-login-button text-decoration-none
+                d-flex align-items-center justify-content-center">
+                Back to Admin Dashboard
+            </a>
+
+            <p class="mm-admin-login-footer">
+                Contact your SuperAdmin if you require additional access.
+            </p>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

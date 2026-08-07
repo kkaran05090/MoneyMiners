@@ -1,0 +1,34 @@
+﻿:root {
+    /* Brand colors */
+    --mm-primary: #b7e336;
+    --mm-primary-dark: #7fae13;
+    --mm-secondary: #00a8e8;
+    /* Backgrounds */
+    --mm-bg-dark: #050806;
+    --mm-bg-dark-soft: #0b110d;
+    --mm-surface: rgba(255, 255, 255, 0.07);
+    --mm-surface-hover: rgba(255, 255, 255, 0.11);
+    /* Text */
+    --mm-text-light: #ffffff;
+    --mm-text-muted: #aab5ad;
+    --mm-text-dark: #111827;
+    /* Borders and effects */
+    --mm-border: rgba(255, 255, 255, 0.14);
+    --mm-glow: rgba(183, 227, 54, 0.22);
+    --mm-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+    /* Layout */
+    --mm-radius-sm: 10px;
+    --mm-radius-md: 18px;
+    --mm-radius-lg: 28px;
+    --mm-section-space: 100px;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background: var(--mm-bg-dark);
+    color: var(--mm-text-light);
+}

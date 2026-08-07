@@ -1,0 +1,392 @@
+﻿@model MoneyMiners.ViewModels.Admin.ContactMessagesPageViewModel
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Contact Messages";
+}
+
+<section class="mm-admin-page">
+
+    <div class="container-fluid">
+
+        <div class="mm-admin-header">
+
+            <div>
+                <span class="mm-admin-label">
+                    ADMIN PANEL
+                </span>
+
+                <h1>Contact Messages</h1>
+
+                <p>
+                    Review investor enquiries, update their status
+                    and manage submitted messages.
+                </p>
+            </div>
+
+            <div class="mm-admin-count">
+                <small>Total Messages</small>
+                <strong>@Model.TotalRecords</strong>
+            </div>
+
+        </div>
+
+        @if (TempData["AdminSuccess"] is string successMessage)
+        {
+            <div class="alert alert-success">
+                @successMessage
+            </div>
+        }
+
+        @if (TempData["AdminError"] is string errorMessage)
+        {
+            <div class="alert alert-danger">
+                @errorMessage
+            </div>
+        }
+
+        @* @if (User.IsInRole("SuperAdmin"))
+        {
+            <div class="mm-admin-users-toolbar">
+
+                <a asp-controller="AdminUsers"
+                   asp-action="Index"
+                   class="mm-admin-filter-button">
+
+                    <i class="bi bi-people-fill"></i>
+                    Manage Admin Accounts
+
+                </a>
+
+            </div>
+        } *@
+
+        <!-- Filters -->
+        <form asp-controller="Admin"
+              asp-action="Index"
+              method="get"
+              class="mm-admin-filters">
+
+            <div class="mm-admin-filter-field">
+
+                <label for="adminSearch">
+                    Search
+                </label>
+
+                <input type="search"
+                       id="adminSearch"
+                       name="search"
+                       value="@Model.Search"
+                       class="form-control"
+                       placeholder="Name, email, phone or subject" />
+
+            </div>
+
+            <div class="mm-admin-filter-field">
+
+                <label for="adminStatus">
+                    Status
+                </label>
+
+                <select id="adminStatus"
+                        name="status"
+                        class="form-select">
+
+                    <option value="">
+                        All Statuses
+                    </option>
+
+                    <option value="New"
+                            selected="@(Model.Status == "New")">
+                        New
+                    </option>
+
+                    <option value="InProgress"
+                            selected="@(Model.Status == "InProgress")">
+                        In Progress
+                    </option>
+
+                    <option value="Resolved"
+                            selected="@(Model.Status == "Resolved")">
+                        Resolved
+                    </option>
+
+                    <option value="Closed"
+                            selected="@(Model.Status == "Closed")">
+                        Closed
+                    </option>
+
+                </select>
+
+            </div>
+
+            <input type="hidden"
+                   name="pageNumber"
+                   value="1" />
+
+            <button type="submit"
+                    class="btn mm-admin-filter-button">
+
+                <i class="bi bi-search"></i>
+                Apply Filters
+
+            </button>
+
+            <a asp-controller="Admin"
+               asp-action="Index"
+               class="btn mm-admin-reset-button">
+
+                Reset
+
+            </a>
+
+        </form>
+
+        <!-- Messages Table -->
+        <div class="mm-admin-table-card">
+
+            @if (Model.Messages.Count == 0)
+            {
+                <div class="mm-admin-empty">
+
+                    <i class="bi bi-inbox"></i>
+
+                    <h2>No Messages Found</h2>
+
+                    <p>
+                        No contact messages match the selected filters.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table mm-admin-table">
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Investor</th>
+                                <th>Contact</th>
+                                <th>Subject &amp; Message</th>
+                                <th>Received</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var message in Model.Messages)
+                            {
+                                <tr>
+
+                                    <td>
+                                        <span class="mm-admin-id">
+                                            #@message.ContactMessageID
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <strong class="mm-admin-name">
+                                            @message.FullName
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        <div class="mm-admin-contact">
+
+                                            <a href="mailto:@message.Email">
+                                                @message.Email
+                                            </a>
+
+                                            <a href="tel:@message.PhoneNumber">
+                                                @message.PhoneNumber
+                                            </a>
+
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="mm-admin-message">
+
+                                            <strong>
+                                                @message.Subject
+                                            </strong>
+
+                                            <p>
+                                                @message.Message
+                                            </p>
+
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <time datetime="@message.CreatedAt.ToString("O")">
+                                            @(message.CreatedAt
+                                            .ToLocalTime()
+                                            .ToString("dd MMM yyyy, hh:mm tt"))
+                                        </time>
+                                    </td>
+
+                                    <td>
+
+                                        <form asp-controller="Admin"
+                                              asp-action="UpdateStatus"
+                                              method="post"
+                                              class="mm-admin-status-form">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden"
+                                                   name="contactMessageId"
+                                                   value="@message.ContactMessageID" />
+
+                                            <input type="hidden"
+                                                   name="rowVersion"
+                                                   value="@message.RowVersionBase64" />
+
+                                            <input type="hidden"
+                                                   name="currentStatus"
+                                                   value="@Model.Status" />
+
+                                            <input type="hidden"
+                                                   name="search"
+                                                   value="@Model.Search" />
+
+                                            <input type="hidden"
+                                                   name="pageNumber"
+                                                   value="@Model.PageNumber" />
+
+                                            <select name="status"
+                                                    class="form-select mm-admin-status-select">
+
+                                                <option value="New"
+                                                        selected="@(message.Status == "New")">
+                                                    New
+                                                </option>
+
+                                                <option value="InProgress"
+                                                        selected="@(message.Status == "InProgress")">
+                                                    In Progress
+                                                </option>
+
+                                                <option value="Resolved"
+                                                        selected="@(message.Status == "Resolved")">
+                                                    Resolved
+                                                </option>
+
+                                                <option value="Closed"
+                                                        selected="@(message.Status == "Closed")">
+                                                    Closed
+                                                </option>
+
+                                            </select>
+
+                                            <button type="submit"
+                                                    class="btn mm-admin-update-button"
+                                                    title="Update status">
+
+                                                <i class="bi bi-check2"></i>
+
+                                            </button>
+
+                                        </form>
+
+                                    </td>
+
+                                    <td>
+
+                                        <form asp-controller="Admin"
+                                              asp-action="DeleteMessage"
+                                              method="post"
+                                              onsubmit="return confirm('Remove this message?');">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden"
+                                                   name="contactMessageId"
+                                                   value="@message.ContactMessageID" />
+
+                                            <input type="hidden"
+                                                   name="rowVersion"
+                                                   value="@message.RowVersionBase64" />
+
+                                            <input type="hidden"
+                                                   name="status"
+                                                   value="@Model.Status" />
+
+                                            <input type="hidden"
+                                                   name="search"
+                                                   value="@Model.Search" />
+
+                                            <input type="hidden"
+                                                   name="pageNumber"
+                                                   value="@Model.PageNumber" />
+
+                                            <button type="submit"
+                                                    class="btn mm-admin-delete-button"
+                                                    title="Remove message">
+
+                                                <i class="bi bi-trash3"></i>
+
+                                            </button>
+
+                                        </form>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <nav class="mm-admin-pagination"
+                 aria-label="Contact messages pages">
+
+                <a asp-controller="Admin"
+                   asp-action="Index"
+                   asp-route-status="@Model.Status"
+                   asp-route-search="@Model.Search"
+                   asp-route-pageNumber="@(Model.PageNumber - 1)"
+                   class="btn @(Model.PageNumber <= 1 ? "disabled" : "")">
+
+                    <i class="bi bi-chevron-left"></i>
+                    Previous
+
+                </a>
+
+                <span>
+                    Page @Model.PageNumber of @Model.TotalPages
+                </span>
+
+                <a asp-controller="Admin"
+                   asp-action="Index"
+                   asp-route-status="@Model.Status"
+                   asp-route-search="@Model.Search"
+                   asp-route-pageNumber="@(Model.PageNumber + 1)"
+                   class="btn @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
+
+                    Next
+                    <i class="bi bi-chevron-right"></i>
+
+                </a>
+
+            </nav>
+        }
+
+    </div>
+
+</section>

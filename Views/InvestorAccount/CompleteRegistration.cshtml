@@ -1,0 +1,532 @@
+﻿@model MoneyMiners.ViewModels.Investor.InvestorRegisterViewModel
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Complete Investor Registration";
+
+    var maskedPhone =
+        Model.PhoneNumber.Length >= 4
+            ? $"******{Model.PhoneNumber[^4..]}"
+            : "****";
+}
+
+<section class="mm-investor-auth-page">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-xl-9 col-lg-10">
+
+                <div class="mm-investor-auth-card">
+                    <div class="card-body p-4 p-md-5">
+
+                        <div class="mm-investor-auth-header">
+
+                            <div class="mm-investor-auth-icon">
+                                <i class="bi bi-person-check-fill"></i>
+                            </div>
+
+                            <span class="mm-investor-auth-kicker">
+                                Final Registration Step
+                            </span>
+
+                            <h1 class="mm-investor-auth-title">
+                                Complete Your Investor Profile
+                            </h1>
+
+                            <p class="mm-investor-auth-copy mb-3">
+                                Your mobile number has been successfully verified.
+                            </p>
+
+                            <span class="mm-investor-auth-badge">
+                                <i class="bi bi-patch-check-fill me-1"></i>
+                                +91 @maskedPhone
+                            </span>
+
+                        </div>
+
+                        <form asp-controller="InvestorAccount"
+                              asp-action="CompleteRegistration"
+                              method="post"
+                              class="mm-investor-auth-form"
+                              autocomplete="off"
+                              novalidate>
+
+                            @Html.AntiForgeryToken()
+
+                            <input asp-for="InvestorOtpChallengeID"
+                                   type="hidden" />
+
+                            <input asp-for="PhoneNumber"
+                                   type="hidden" />
+
+                            <div asp-validation-summary="ModelOnly"
+                                 class="alert alert-danger"
+                                 role="alert">
+                            </div>
+
+                            <div class="mm-investor-auth-section">
+
+                                <div class="mm-investor-auth-section-header">
+                                    <i class="bi bi-person-vcard fs-4"></i>
+
+                                    <div>
+                                        <h2 class="h5 mb-0">
+                                            Personal Information
+                                        </h2>
+
+                                        <small class="text-muted">
+                                            Enter your legal identity details.
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+
+                                    <div class="col-md-6">
+                                        <label asp-for="FirstName"
+                                               class="form-label fw-semibold">
+                                        </label>
+
+                                        <input asp-for="FirstName"
+                                               class="form-control"
+                                               autocomplete="given-name"
+                                               placeholder="Enter first name" />
+
+                                        <span asp-validation-for="FirstName"
+                                              class="text-danger small">
+                                        </span>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label asp-for="LastName"
+                                               class="form-label fw-semibold">
+                                        </label>
+
+                                        <input asp-for="LastName"
+                                               class="form-control"
+                                               autocomplete="family-name"
+                                               placeholder="Enter last name" />
+
+                                        <span asp-validation-for="LastName"
+                                              class="text-danger small">
+                                        </span>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label asp-for="FatherName"
+                                               class="form-label fw-semibold">
+                                        </label>
+
+                                        <input asp-for="FatherName"
+                                               class="form-control"
+                                               placeholder="Enter father's name" />
+
+                                        <span asp-validation-for="FatherName"
+                                              class="text-danger small">
+                                        </span>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">
+                                            Verified Mobile Number
+                                        </label>
+
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                +91
+                                            </span>
+
+                                            <input value="@Model.PhoneNumber"
+                                                   class="form-control"
+                                                   readonly />
+                                        </div>
+
+                                        <div class="form-text text-success">
+                                            <i class="bi bi-patch-check-fill me-1"></i>
+                                            Mobile number verified
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label asp-for="Email"
+                                               class="form-label fw-semibold">
+                                        </label>
+
+                                        <input asp-for="Email"
+                                               class="form-control"
+                                               type="email"
+                                               autocomplete="email"
+                                               placeholder="name@example.com" />
+
+                                        <span asp-validation-for="Email"
+                                              class="text-danger small">
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <hr class="my-4" />
+
+                            <div class="mm-investor-auth-section">
+
+                                <div class="mm-investor-auth-section-header">
+                                    <i class="bi bi-geo-alt-fill fs-4"></i>
+
+                                    <div>
+                                        <h2 class="h5 mb-0">
+                                            Address Information
+                                        </h2>
+
+                                        <small class="text-muted">
+                                            Enter your current residential address.
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+
+                                    <div class="col-12">
+                                        <label asp-for="AddressLine1"
+                                               class="form-label fw-semibold">
+                                        </label>
+
+                                        <input asp-for="AddressLine1"
+                                               class="form-control"
+                                               autocomplete="address-line1"
+                                               placeholder="House number, building or street" />
+
+                                        <span asp-validation-for="AddressLine1"
+                                              class="text-danger small">
+                                        </span>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label asp-for="AddressLine2"
+                                               class="form-label fw-semibold">
+                                        </label>
+
+                                        <input asp-for="AddressLine2"
+                                               class="form-control"
+                                               autocomplete="address-line2"
+                                               placeholder="Area, locality or landmark" />
+
+                                        <span asp-validation-for="AddressLine2"
+                                              class="text-danger small">
+                                        </span>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label asp-for="City"
+                                               class="form-label fw-semibold">
+                                        </label>
+
+                                        <input asp-for="City"
+                                               class="form-control"
+                                               autocomplete="address-level2"
+                                               placeholder="Enter city" />
+
+                                        <span asp-validation-for="City"
+                                              class="text-danger small">
+                                        </span>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label asp-for="State"
+                                               class="form-label fw-semibold">
+                                        </label>
+
+                                        <input asp-for="State"
+                                               class="form-control"
+                                               autocomplete="address-level1"
+                                               placeholder="Enter state" />
+
+                                        <span asp-validation-for="State"
+                                              class="text-danger small">
+                                        </span>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label asp-for="PostalCode"
+                                               class="form-label fw-semibold">
+                                        </label>
+
+                                        <input asp-for="PostalCode"
+                                               class="form-control"
+                                               inputmode="numeric"
+                                               maxlength="6"
+                                               autocomplete="postal-code"
+                                               placeholder="Enter 6-digit PIN code" />
+
+                                        <span asp-validation-for="PostalCode"
+                                              class="text-danger small">
+                                        </span>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label asp-for="Country"
+                                               class="form-label fw-semibold">
+                                        </label>
+
+                                        <input asp-for="Country"
+                                               class="form-control"
+                                               autocomplete="country-name"
+                                               readonly />
+
+                                        <span asp-validation-for="Country"
+                                              class="text-danger small">
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <hr class="my-4" />
+
+                            <div class="mm-investor-auth-section">
+
+                                <div class="mm-investor-auth-section-header">
+                                    <i class="bi bi-shield-lock-fill fs-4"></i>
+
+                                    <div>
+                                        <h2 class="h5 mb-0">
+                                            Identity Verification
+                                        </h2>
+
+                                        <small class="text-muted">
+                                            Your identity numbers will be encrypted.
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <div class="alert alert-warning small"
+                                     role="alert">
+
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+                                    Enter your correct Aadhaar and PAN details.
+                                    These values cannot be reused for another account.
+
+                                </div>
+
+                                <div class="row g-3">
+
+                                    <div class="col-md-6">
+                                        <label asp-for="AadhaarNumber"
+                                               class="form-label fw-semibold">
+                                        </label>
+
+                                        <input asp-for="AadhaarNumber"
+                                               class="form-control"
+                                               inputmode="numeric"
+                                               maxlength="12"
+                                               autocomplete="off"
+                                               placeholder="Enter 12-digit Aadhaar number" />
+
+                                        <span asp-validation-for="AadhaarNumber"
+                                              class="text-danger small">
+                                        </span>
+
+                                        <div class="form-text">
+                                            Aadhaar will be stored in encrypted form.
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label asp-for="PANNumber"
+                                               class="form-label fw-semibold">
+                                        </label>
+
+                                        <input asp-for="PANNumber"
+                                               class="form-control text-uppercase"
+                                               maxlength="10"
+                                               autocomplete="off"
+                                               placeholder="ABCDE1234F" />
+
+                                        <span asp-validation-for="PANNumber"
+                                              class="text-danger small">
+                                        </span>
+
+                                        <div class="form-text">
+                                            PAN is optional and will be encrypted.
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <hr class="my-4" />
+
+                            <div class="mb-4">
+
+                                <div class="mm-investor-auth-section-header">
+                                    <i class="bi bi-key-fill fs-4"></i>
+
+                                    <div>
+                                        <h2 class="h5 mb-0">
+                                            Account Security
+                                        </h2>
+
+                                        <small class="text-muted">
+                                            Create a strong password for your account.
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+
+                                    <div class="col-md-6">
+                                        <label asp-for="Password"
+                                               class="form-label fw-semibold">
+                                        </label>
+
+                                        <div class="input-group">
+
+                                            <input asp-for="Password"
+                                                   class="form-control"
+                                                   autocomplete="new-password"
+                                                   placeholder="Minimum 8 characters" />
+
+                                            <button type="button"
+                                                    class="btn btn-outline-secondary password-toggle"
+                                                    data-target="Password"
+                                                    aria-label="Show password">
+
+                                                <i class="bi bi-eye"></i>
+
+                                            </button>
+
+                                        </div>
+
+                                        <span asp-validation-for="Password"
+                                              class="text-danger small">
+                                        </span>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label asp-for="ConfirmPassword"
+                                               class="form-label fw-semibold">
+                                        </label>
+
+                                        <div class="input-group">
+
+                                            <input asp-for="ConfirmPassword"
+                                                   class="form-control"
+                                                   autocomplete="new-password"
+                                                   placeholder="Re-enter password" />
+
+                                            <button type="button"
+                                                    class="btn btn-outline-secondary password-toggle"
+                                                    data-target="ConfirmPassword"
+                                                    aria-label="Show password">
+
+                                                <i class="bi bi-eye"></i>
+
+                                            </button>
+
+                                        </div>
+
+                                        <span asp-validation-for="ConfirmPassword"
+                                              class="text-danger small">
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="form-check mb-4">
+
+                                <input asp-for="AcceptTerms"
+                                       class="form-check-input" />
+
+                                <label asp-for="AcceptTerms"
+                                       class="form-check-label">
+                                    I confirm that the information provided is
+                                    correct and I accept the Terms and Privacy Policy.
+                                </label>
+
+                                <div>
+                                    <span asp-validation-for="AcceptTerms"
+                                          class="text-danger small">
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <button type="submit"
+                                    class="btn btn-dark btn-lg w-100">
+
+                                <i class="bi bi-person-check-fill me-2"></i>
+                                Create Investor Account
+
+                            </button>
+
+                        </form>
+
+                        <div class="text-center mt-4">
+
+                            <a asp-controller="InvestorAccount"
+                               asp-action="CreateAccount"
+                               class="text-decoration-none">
+
+                                <i class="bi bi-arrow-left me-1"></i>
+                                Restart Mobile Verification
+
+                            </a>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.querySelectorAll(".password-toggle")
+            .forEach(function (button) {
+                button.addEventListener("click", function () {
+                    const targetId =
+                        button.getAttribute("data-target");
+
+                    const input =
+                        document.getElementById(targetId);
+
+                    const icon =
+                        button.querySelector("i");
+
+                    if (!input) {
+                        return;
+                    }
+
+                    const isPassword =
+                        input.type === "password";
+
+                    input.type =
+                        isPassword ? "text" : "password";
+
+                    icon.className =
+                        isPassword
+                            ? "bi bi-eye-slash"
+                            : "bi bi-eye";
+
+                    button.setAttribute(
+                        "aria-label",
+                        isPassword
+                            ? "Hide password"
+                            : "Show password");
+                });
+            });
+    </script>
+}

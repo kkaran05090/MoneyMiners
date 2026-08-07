@@ -1,0 +1,272 @@
+﻿/* =========================================
+   MONEY MINERS ADMIN LOGIN
+========================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+    body.mm-admin-login-page {
+        margin: 0;
+        color: #ffffff;
+        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: radial-gradient( circle at 15% 10%, rgba(183, 227, 54, 0.12), transparent 30% ), radial-gradient( circle at 90% 90%, rgba(36, 92, 48, 0.20), transparent 35% ), linear-gradient( 145deg, #020604 0%, #061009 50%, #020604 100% );
+    }
+
+.mm-admin-login-wrapper {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+}
+
+.mm-admin-login-card {
+    width: min(100%, 470px);
+    padding: 38px;
+    border: 1px solid rgba(183, 227, 54, 0.18);
+    border-radius: 24px;
+    background: linear-gradient( 145deg, rgba(10, 22, 13, 0.97), rgba(3, 10, 6, 0.98) );
+    box-shadow: 0 35px 80px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(14px);
+}
+
+.mm-admin-login-brand {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 40px;
+}
+
+.mm-admin-login-logo {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    color: #061006;
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    background: linear-gradient( 135deg, #d7f75c, #9fc820 );
+    box-shadow: 0 12px 30px rgba(183, 227, 54, 0.20);
+}
+
+.mm-admin-login-brand span {
+    display: block;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.mm-admin-login-brand small {
+    display: block;
+    margin-top: 2px;
+    color: rgba(220, 226, 222, 0.46);
+    font-size: 0.69rem;
+    font-weight: 650;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+}
+
+.mm-admin-login-heading {
+    margin-bottom: 30px;
+}
+
+.mm-admin-login-label {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: #b7e336;
+    font-size: 0.69rem;
+    font-weight: 850;
+    letter-spacing: 1.5px;
+}
+
+.mm-admin-login-heading h1 {
+    margin: 0 0 10px;
+    color: #ffffff;
+    font-size: clamp(2rem, 5vw, 2.65rem);
+    font-weight: 900;
+    letter-spacing: -1px;
+}
+
+.mm-admin-login-heading p {
+    margin: 0;
+    color: rgba(220, 226, 222, 0.56);
+    font-size: 0.88rem;
+    line-height: 1.65;
+}
+
+.mm-admin-login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 21px;
+}
+
+.mm-admin-login-field label {
+    display: block;
+    margin-bottom: 8px;
+    color: rgba(235, 240, 236, 0.78);
+    font-size: 0.78rem;
+    font-weight: 750;
+}
+
+.mm-admin-login-field .form-control {
+    min-height: 50px;
+    padding: 12px 15px;
+    border: 1px solid rgba(183, 227, 54, 0.15);
+    border-radius: 12px;
+    color: #ffffff;
+    background: rgba(1, 7, 4, 0.92);
+    box-shadow: none;
+}
+
+    .mm-admin-login-field .form-control::placeholder {
+        color: rgba(220, 226, 222, 0.30);
+    }
+
+    .mm-admin-login-field .form-control:focus {
+        border-color: rgba(183, 227, 54, 0.58);
+        color: #ffffff;
+        background: rgba(1, 7, 4, 0.98);
+        box-shadow: 0 0 0 3px rgba(183, 227, 54, 0.08);
+    }
+
+.mm-admin-password-wrapper {
+    position: relative;
+}
+
+    .mm-admin-password-wrapper .form-control {
+        padding-right: 70px;
+    }
+
+.mm-admin-password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    min-width: 50px;
+    padding: 6px 8px;
+    border: 0;
+    border-radius: 8px;
+    color: #b7e336;
+    font-size: 0.72rem;
+    font-weight: 800;
+    background: rgba(183, 227, 54, 0.07);
+    transform: translateY(-50%);
+}
+
+    .mm-admin-password-toggle:hover {
+        color: #061006;
+        background: #b7e336;
+    }
+
+.mm-admin-login-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mm-admin-remember {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0;
+    color: rgba(220, 226, 222, 0.60);
+    font-size: 0.78rem;
+    cursor: pointer;
+}
+
+    .mm-admin-remember .form-check-input {
+        width: 17px;
+        height: 17px;
+        margin: 0;
+        border: 1px solid rgba(183, 227, 54, 0.35);
+        background-color: rgba(2, 8, 5, 0.9);
+        box-shadow: none;
+    }
+
+        .mm-admin-remember .form-check-input:checked {
+            border-color: #b7e336;
+            background-color: #b7e336;
+        }
+
+.mm-admin-login-button {
+    min-height: 51px;
+    margin-top: 3px;
+    border: 1px solid #b7e336;
+    border-radius: 12px;
+    color: #061006;
+    font-size: 0.86rem;
+    font-weight: 900;
+    background: linear-gradient( 135deg, #cef14b, #a8d322 );
+    box-shadow: 0 15px 35px rgba(183, 227, 54, 0.14);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+    .mm-admin-login-button:hover {
+        background: linear-gradient( 135deg, #dcfb69, #b7e336 );
+        box-shadow: 0 18px 40px rgba(183, 227, 54, 0.22);
+        transform: translateY(-1px);
+    }
+
+    .mm-admin-login-button:active {
+        transform: translateY(0);
+    }
+
+.mm-admin-login-validation {
+    display: none;
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 91, 91, 0.25);
+    border-radius: 10px;
+    color: #ff9b9b;
+    font-size: 0.79rem;
+    background: rgba(110, 16, 16, 0.16);
+}
+
+    .mm-admin-login-validation.validation-summary-errors {
+        display: block;
+    }
+
+    .mm-admin-login-validation ul {
+        margin: 0;
+        padding-left: 18px;
+    }
+
+.mm-admin-login-field .text-danger {
+    display: block;
+    margin-top: 7px;
+    color: #ff8989 !important;
+    font-size: 0.72rem;
+}
+
+.mm-admin-login-footer {
+    margin: 28px 0 0;
+    padding-top: 22px;
+    border-top: 1px solid rgba(183, 227, 54, 0.09);
+    color: rgba(220, 226, 222, 0.35);
+    font-size: 0.69rem;
+    text-align: center;
+}
+
+@media (max-width: 576px) {
+    .mm-admin-login-wrapper {
+        padding: 22px 14px;
+    }
+
+    .mm-admin-login-card {
+        padding: 27px 22px;
+        border-radius: 19px;
+    }
+
+    .mm-admin-login-brand {
+        margin-bottom: 30px;
+    }
+
+    .mm-admin-login-heading h1 {
+        font-size: 2rem;
+    }
+}

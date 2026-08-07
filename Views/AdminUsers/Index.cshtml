@@ -1,0 +1,209 @@
+﻿@model List<MoneyMiners.ViewModels.Admin.AdminUserListItemViewModel>
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Admin Management";
+}
+
+<section class="mm-admin-page">
+    <div class="container-fluid">
+
+        <div class="mm-admin-header">
+            <div>
+                <span class="mm-admin-label">
+                    SUPERADMIN CONTROL
+                </span>
+
+                <h1>Admin Management</h1>
+
+                <p>
+                    Create and review administrator accounts that can
+                    manage daily Money Miners operations.
+                </p>
+            </div>
+
+            <div class="mm-admin-count">
+                <small>Total Accounts</small>
+                <strong>@Model.Count</strong>
+            </div>
+        </div>
+
+        @if (TempData["AdminUserSuccess"] is string successMessage)
+        {
+            <div class="alert alert-success"
+                 role="alert">
+                @successMessage
+            </div>
+        }
+
+        <div class="mm-admin-users-toolbar">
+
+            <a asp-controller="Admin"
+               asp-action="Index"
+               class="mm-admin-reset-button">
+                ← Back to Dashboard
+            </a>
+
+            <a asp-controller="AdminUsers"
+               asp-action="Create"
+               class="mm-admin-filter-button">
+                + Create New Admin
+            </a>
+
+        </div>
+
+        <div class="mm-admin-table-card">
+            <div class="table-responsive">
+
+                @if (Model.Count == 0)
+                {
+                    <div class="mm-admin-empty">
+
+                        <h2>No admin accounts found</h2>
+
+                        <p>
+                            Create the first normal administrator account.
+                        </p>
+
+                    </div>
+                }
+                else
+                {
+                    <table class="table mm-admin-table">
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Administrator</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Login Security</th>
+                                <th>Last Login</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var adminUser in Model)
+                            {
+                                var roleClass =
+                                    adminUser.Role == "SuperAdmin"
+                                        ? "mm-admin-role-super"
+                                        : "mm-admin-role-normal";
+
+                                var accountIsLocked =
+                                    adminUser.LockoutEndUtc.HasValue &&
+                                    adminUser.LockoutEndUtc.Value >
+                                    DateTime.UtcNow;
+
+                                <tr>
+
+                                    <td>
+                                        <span class="mm-admin-id">
+                                            #@adminUser.AdminUserID
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <div class="mm-admin-user-identity">
+
+                                            <strong>
+                                                @adminUser.Username
+                                            </strong>
+
+                                            <a href="mailto:@adminUser.Email">
+                                                @adminUser.Email
+                                            </a>
+
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <span class="mm-admin-role-badge @roleClass">
+                                            @adminUser.Role
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        @if (adminUser.IsActive)
+                                        {
+                                            <span class="mm-admin-account-status is-active">
+                                                Active
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="mm-admin-account-status is-inactive">
+                                                Inactive
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        <div class="mm-admin-security-info">
+
+                                            <span>
+                                                Failed attempts:
+                                                <strong>
+                                                    @adminUser.FailedLoginCount
+                                                </strong>
+                                            </span>
+
+                                            @if (accountIsLocked)
+                                            {
+                                                <span class="mm-admin-lock-status">
+                                                    Locked until
+                                                    @(adminUser.LockoutEndUtc!.Value
+                                                        .ToString("dd MMM yyyy, hh:mm tt"))
+                                                    UTC
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="mm-admin-unlocked-status">
+                                                    Account unlocked
+                                                </span>
+                                            }
+
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        @if (adminUser.LastLoginAtUtc.HasValue)
+                                        {
+                                            <time>
+                                                @(adminUser.LastLoginAtUtc.Value
+                                                    .ToString("dd MMM yyyy, hh:mm tt"))
+                                                UTC
+                                            </time>
+                                        }
+                                        else
+                                        {
+                                            <span class="mm-admin-never-login">
+                                                Never
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        <time>
+                                            @(adminUser.CreatedAtUtc
+                                                .ToString("dd MMM yyyy, hh:mm tt"))
+                                            UTC
+                                        </time>
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+                }
+
+            </div>
+        </div>
+
+    </div>
+</section>

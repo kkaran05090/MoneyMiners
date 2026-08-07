@@ -1,0 +1,153 @@
+﻿@model MoneyMiners.ViewModels.Investor.InvestorOtpVerifyViewModel
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Verify Mobile Number";
+
+    var maskedPhone =
+        Model.PhoneNumber.Length >= 4
+            ? $"******{Model.PhoneNumber[^4..]}"
+            : "****";
+}
+
+<section class="mm-investor-auth-page">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-xl-5 col-lg-6 col-md-8">
+
+                <div class="mm-investor-auth-card">
+                    <div class="p-4 p-md-5">
+
+                        <div class="mm-investor-auth-header">
+
+                            <div class="mm-investor-auth-icon">
+                                <i class="bi bi-phone-fill"></i>
+                            </div>
+
+                            <span class="mm-investor-auth-kicker">
+                                Mobile Verification
+                            </span>
+
+                            <h1 class="mm-investor-auth-title">
+                                Enter Verification OTP
+                            </h1>
+
+                            <p class="mm-investor-auth-copy">
+                                A six-digit verification OTP was generated for
+                                <strong class="text-white">
+                                    +91 @maskedPhone
+                                </strong>
+                            </p>
+
+                        </div>
+
+                        <form asp-controller="InvestorAccount"
+                              asp-action="VerifyRegistrationOtp"
+                              method="post"
+                              class="mm-investor-auth-form"
+                              novalidate>
+
+                            @Html.AntiForgeryToken()
+
+                            <input asp-for="InvestorOtpChallengeID"
+                                   type="hidden" />
+
+                            <input asp-for="PhoneNumber"
+                                   type="hidden" />
+
+                            <div asp-validation-summary="ModelOnly"
+                                 class="alert alert-danger"
+                                 role="alert">
+                            </div>
+
+                            <div class="mb-4">
+
+                                <label asp-for="OtpCode"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="OtpCode"
+                                       class="form-control mm-investor-otp-input"
+                                       inputmode="numeric"
+                                       autocomplete="one-time-code"
+                                       maxlength="6"
+                                       placeholder="● ● ● ● ● ●" />
+
+                                <span asp-validation-for="OtpCode"
+                                      class="text-danger small">
+                                </span>
+
+                                <div class="form-text text-center mt-3">
+                                    OTP is valid for 5 minutes.
+                                    Maximum 5 attempts are allowed.
+                                </div>
+
+                            </div>
+
+                            <button type="submit"
+                                    class="btn mm-investor-auth-primary w-100">
+
+                                <i class="bi bi-shield-check me-2"></i>
+                                Verify Mobile Number
+
+                            </button>
+
+                        </form>
+
+                        <div class="text-center mt-4">
+
+                            <p class="text-muted mb-2">
+                                Did not receive the OTP?
+                            </p>
+
+                            <a asp-controller="InvestorAccount"
+                               asp-action="CreateAccount"
+                               class="mm-investor-auth-link">
+
+                                Request New OTP
+
+                            </a>
+
+                        </div>
+
+                        <hr class="mm-investor-auth-divider" />
+
+                        <div class="mm-investor-auth-security">
+
+                            <i class="bi bi-info-circle-fill"></i>
+
+                            <p>
+                                Never share your password or verification OTP.
+                                Money Miners representatives will never ask
+                                you to disclose these security details.
+                            </p>
+
+                        </div>
+
+                        <div class="text-center mt-4">
+
+                            <a asp-controller="Home"
+                               asp-action="Index"
+                               class="mm-investor-auth-link">
+
+                                <i class="bi bi-arrow-left me-1"></i>
+                                Back to Home
+
+                            </a>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

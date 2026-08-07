@@ -1,0 +1,195 @@
+﻿@model MoneyMiners.Models.InvestorRegistrationResult
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Registration Successful";
+}
+
+<section class="mm-investor-auth-page">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-xl-6 col-lg-7 col-md-9">
+
+                <div class="mm-investor-auth-card">
+                    <div class="p-4 p-md-5 text-center">
+
+                        <div class="mm-investor-auth-success-icon">
+                            <i class="bi bi-check-lg"></i>
+                        </div>
+
+                        <span class="mm-investor-auth-kicker">
+                            Registration Completed
+                        </span>
+
+                        <h1 class="mm-investor-auth-title">
+                            Welcome, @Model.DisplayName!
+                        </h1>
+
+                        <p class="mm-investor-auth-copy mb-4">
+                            Your investor account has been created successfully.
+                            Save your Investor ID securely because you will use
+                            it to sign in to the Money Miners investor portal.
+                        </p>
+
+                        <div class="mm-investor-auth-code mb-4">
+
+                            <small>
+                                Your Investor ID
+                            </small>
+
+                            <div class="d-flex flex-wrap
+                                justify-content-center
+                                align-items-center
+                                gap-3 mt-3">
+
+                                <strong id="investorCode">
+                                    @Model.InvestorCode
+                                </strong>
+
+                                <button type="button"
+                                        id="copyInvestorCode"
+                                        class="btn mm-investor-auth-secondary
+                                    d-inline-flex
+                                    align-items-center
+                                    justify-content-center"
+                                        aria-label="Copy Investor ID">
+
+                                    <i class="bi bi-copy"></i>
+
+                                </button>
+
+                            </div>
+
+                            <div id="copyMessage"
+                                 class="text-success small mt-3 d-none">
+
+                                <i class="bi bi-check-circle-fill me-1"></i>
+                                Investor ID copied successfully.
+
+                            </div>
+
+                        </div>
+
+                        <div class="row g-3 text-start mb-4">
+
+                            <div class="col-md-6">
+
+                                <div class="mm-investor-auth-detail">
+
+                                    <small>
+                                        Investor Name
+                                    </small>
+
+                                    <strong>
+                                        @Model.DisplayName
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <div class="mm-investor-auth-detail">
+
+                                    <small>
+                                        Verified Mobile
+                                    </small>
+
+                                    <strong>
+                                        +91 @Model.PhoneNumber
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="mm-investor-auth-security text-start mb-4">
+
+                            <i class="bi bi-shield-lock-fill"></i>
+
+                            <div>
+
+                                <strong class="d-block text-white mb-1">
+                                    Keep your Investor ID secure
+                                </strong>
+
+                                <p>
+                                    Never share your password or OTP with anyone.
+                                    Money Miners representatives will never ask
+                                    you to disclose your password.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <a asp-controller="InvestorAccount"
+                           asp-action="Login"
+                           class="btn mm-investor-auth-primary
+                            d-flex justify-content-center
+                            align-items-center gap-2 w-100">
+
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            Continue to Investor Login
+
+                        </a>
+
+                        <a asp-controller="Home"
+                           asp-action="Index"
+                           class="btn mm-investor-auth-secondary
+                            d-flex justify-content-center
+                            align-items-center gap-2 w-100 mt-3">
+
+                            <i class="bi bi-house-door-fill"></i>
+                            Return to Home
+
+                        </a>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@section Scripts
+{
+    <script>
+        const copyButton =
+            document.getElementById("copyInvestorCode");
+
+        const investorCode =
+            document.getElementById("investorCode");
+
+        const copyMessage =
+            document.getElementById("copyMessage");
+
+        copyButton?.addEventListener(
+            "click",
+            async function() {
+                try {
+                    await navigator.clipboard.writeText(
+                        investorCode.textContent.trim());
+
+                    copyMessage.classList.remove("d-none");
+
+                    window.setTimeout(
+                        function() {
+                            copyMessage.classList.add("d-none");
+                        },
+                        2500);
+                }
+                catch {
+                    alert(
+                        "Investor ID could not be copied. " +
+                        "Please copy it manually.");
+                }
+            });
+    </script>
+}

@@ -1,0 +1,471 @@
+﻿@model MoneyMiners.ViewModels.Admin.InvestorsPageViewModel
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Investor Management";
+
+    var isSuperAdmin =
+        User.IsInRole("SuperAdmin");
+}
+
+<section class="mm-admin-page">
+
+    <div class="container-fluid">
+
+        <!-- Page Header -->
+        <div class="mm-admin-header">
+
+            <div>
+
+                <span class="mm-admin-label">
+                    INVESTOR OPERATIONS
+                </span>
+
+                <h1>
+                    Investor Management
+                </h1>
+
+                <p>
+                    Review registered investors, verification status,
+                    active investments and account information.
+                </p>
+
+            </div>
+
+            <div class="mm-admin-count">
+
+                <small>
+                    Total Investors
+                </small>
+
+                <strong>
+                    @Model.TotalRecords
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- Filters -->
+        <form asp-controller="Investors"
+              asp-action="Index"
+              method="get"
+              class="mm-admin-filters">
+
+            <div class="mm-admin-filter-field">
+
+                <label for="investorSearch">
+                    Search
+                </label>
+
+                <input type="search"
+                       id="investorSearch"
+                       name="search"
+                       value="@Model.Search"
+                       class="form-control"
+                       placeholder="Investor ID, name, phone, email, city or last 4 digits" />
+
+            </div>
+
+            <div class="mm-admin-filter-field">
+
+                <label for="investorStatus">
+                    Account Status
+                </label>
+
+                <select id="investorStatus"
+                        name="status"
+                        class="form-select">
+
+                    <option value="">
+                        All Statuses
+                    </option>
+
+                    <option value="Active"
+                            selected="@(Model.Status == "Active")">
+                        Active
+                    </option>
+
+                    <option value="Inactive"
+                            selected="@(Model.Status == "Inactive")">
+                        Inactive
+                    </option>
+
+                </select>
+
+            </div>
+
+            <input type="hidden"
+                   name="pageNumber"
+                   value="1" />
+
+            <button type="submit"
+                    class="btn mm-admin-filter-button">
+
+                <i class="bi bi-search"></i>
+                Apply Filters
+
+            </button>
+
+            <a asp-controller="Investors"
+               asp-action="Index"
+               class="btn mm-admin-reset-button">
+
+                Reset
+
+            </a>
+
+        </form>
+
+
+        <!-- Investors Table -->
+        <div class="mm-admin-table-card">
+
+            @if (Model.Investors.Count == 0)
+            {
+                <div class="mm-admin-empty">
+
+                    <i class="bi bi-person-vcard"></i>
+
+                    <h2>
+                        No Investors Found
+                    </h2>
+
+                    <p>
+                        No registered investor accounts match
+                        the selected filters.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table mm-admin-table mm-investors-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Investor ID</th>
+                                <th>Investor</th>
+                                <th>Contact</th>
+                                <th>Location</th>
+                                <th>Investments</th>
+                                <th>Verification</th>
+                                <th>Identity</th>
+                                <th>Status</th>
+                                <th>Last Login</th>
+                                <th>Registered</th>
+
+                                @if (isSuperAdmin)
+                                {
+                                    <th>Action</th>
+                                }
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var investor in Model.Investors)
+                            {
+                                <tr>
+
+                                    <!-- Investor ID -->
+                                    <td>
+
+                                        <span class="mm-admin-id">
+                                            @investor.InvestorCode
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Investor -->
+                                    <td>
+
+                                        <div class="mm-admin-user-identity">
+
+                                            <strong class="d-block">
+                                                @investor.InvestorName
+                                            </strong>
+
+                                            @if (!string.IsNullOrWhiteSpace(
+                                                investor.FatherName))
+                                            {
+                                                <span class="d-block">
+                                                    Father: @investor.FatherName
+                                                </span>
+                                            }
+
+                                            <span class="d-block">
+                                                Account #@investor.InvestorAccountID
+                                            </span>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- Contact -->
+                                    <td>
+
+                                        <div class="mm-admin-contact">
+
+                                            <a href="tel:@investor.PhoneNumber">
+                                                @investor.PhoneNumber
+                                            </a>
+
+                                            @if (!string.IsNullOrWhiteSpace(
+                                                investor.Email))
+                                            {
+                                                <a href="mailto:@investor.Email">
+                                                    @investor.Email
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <span>
+                                                    No email
+                                                </span>
+                                            }
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- Location -->
+                                    <td>
+
+                                        <div class="mm-admin-security-info">
+
+                                            @{
+                                                var locationParts =
+                                                    new[]
+                                                    {
+                                                        investor.City,
+                                                        investor.State
+                                                    }
+                                                    .Where(value =>
+                                                        !string.IsNullOrWhiteSpace(
+                                                            value));
+                                            }
+
+                                            <strong>
+                                                @{
+                                                    var location =
+                                                        string.Join(
+                                                            ", ",
+                                                            locationParts);
+                                                }
+
+                                                @(string.IsNullOrWhiteSpace(location)
+                                                    ? "Not provided"
+                                                    : location)
+                                            </strong>
+
+                                            <span>
+                                                @investor.Country
+                                            </span>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- Investments -->
+                                    <td>
+
+                                        <div class="mm-admin-security-info">
+
+                                            <strong>
+                                                ₹@investor.TotalActiveInvestment.ToString("N2")
+                                            </strong>
+
+                                            <span>
+                                                Active Plans:
+                                                @investor.ActivePlansCount
+                                            </span>
+
+                                            <span>
+                                                Total Investments:
+                                                @investor.TotalInvestmentCount
+                                            </span>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- Verification -->
+                                    <td>
+
+                                        @if (investor.IsMobileVerified)
+                                        {
+                                            <span class="mm-admin-account-status is-active">
+
+                                                <i class="bi bi-patch-check-fill"></i>
+                                                Verified
+
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="mm-admin-account-status is-inactive">
+
+                                                <i class="bi bi-exclamation-circle"></i>
+                                                Unverified
+
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Identity -->
+                                    <td>
+
+                                        <div class="mm-admin-security-info">
+
+                                            <span>
+                                                Aadhaar:
+                                                <strong>
+                                                    @investor.MaskedAadhaar
+                                                </strong>
+                                            </span>
+
+                                            <span>
+                                                PAN:
+                                                <strong>
+                                                    @investor.MaskedPAN
+                                                </strong>
+                                            </span>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- Account Status -->
+                                    <td>
+
+                                        <span class="mm-admin-account-status
+                                            @(investor.IsActive
+                                                ? "is-active"
+                                                : "is-inactive")">
+
+                                            @investor.Status
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Last Login -->
+                                    <td>
+                                        @if (investor.LastLoginAtUtc.HasValue)
+                                        {
+                                            <time datetime="@investor.LastLoginAtUtc.Value.ToString("O")">
+                                                @(investor.LastLoginAtUtc.Value.ToLocalTime().ToString("dd MMM yyyy"))
+                                                <br />
+                                                <small>
+                                                    @(investor.LastLoginAtUtc.Value.ToLocalTime().ToString("hh:mm tt"))
+                                                </small>
+                                            </time>
+                                        }
+                                        else
+                                        {
+                                            <span>Never</span>
+                                        }
+                                    </td>
+
+
+                                    <!-- Registered -->
+                                    <td>
+                                        <time datetime="@investor.CreatedAtUtc.ToString("O")">
+                                            @(investor.CreatedAtUtc.ToLocalTime().ToString("dd MMM yyyy"))
+                                        </time>
+                                    </td>
+
+
+                                    <!-- SuperAdmin Action -->
+                                    @if (isSuperAdmin)
+                                    {
+                                        <td>
+
+                                            <a asp-controller="AdminInvestments"
+                                               asp-action="Assign"
+                                               asp-route-investorCode="@investor.InvestorCode"
+                                               class="btn mm-admin-filter-button btn-sm">
+
+                                                <i class="bi bi-cash-stack"></i>
+                                                Assign
+
+                                            </a>
+
+                                        </td>
+                                    }
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <nav class="mm-admin-pagination"
+                 aria-label="Investor pages">
+
+                <a asp-controller="Investors"
+                   asp-action="Index"
+                   asp-route-status="@Model.Status"
+                   asp-route-search="@Model.Search"
+                   asp-route-pageNumber="@(Model.PageNumber - 1)"
+                   class="btn
+                    @(Model.PageNumber <= 1
+                       ? "disabled"
+                       : "")">
+
+                    <i class="bi bi-chevron-left"></i>
+                    Previous
+
+                </a>
+
+                <span>
+                    Page @Model.PageNumber
+                    of @Model.TotalPages
+                </span>
+
+                <a asp-controller="Investors"
+                   asp-action="Index"
+                   asp-route-status="@Model.Status"
+                   asp-route-search="@Model.Search"
+                   asp-route-pageNumber="@(Model.PageNumber + 1)"
+                   class="btn
+                    @(Model.PageNumber >= Model.TotalPages
+                       ? "disabled"
+                       : "")">
+
+                    Next
+                    <i class="bi bi-chevron-right"></i>
+
+                </a>
+
+            </nav>
+        }
+
+    </div>
+
+</section>

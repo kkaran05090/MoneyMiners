@@ -1,0 +1,200 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
+    color: var(--bs-secondary-color);
+    text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder {
+    text-align: start;
+}
+
+.footer {
+    position: relative !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    flex-shrink: 0;
+    width: 100%;
+    padding: 24px 0;
+    line-height: normal !important;
+    border-top: 1px solid rgba(183, 227, 54, 0.12) !important;
+    background: #020604;
+}
+
+
+/* =========================================
+   MONEY MINERS FOOTER
+========================================= */
+
+.mm-footer {
+    flex-shrink: 0;
+    width: 100%;
+    border-top: 1px solid rgba(183, 227, 54, 0.14);
+    background: radial-gradient( circle at 15% 0%, rgba(183, 227, 54, 0.06), transparent 32% ), #020604;
+}
+
+.mm-footer-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    padding: 45px 0 35px;
+}
+
+.mm-footer-brand {
+    max-width: 410px;
+}
+
+.mm-footer-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+    .mm-footer-logo:hover {
+        color: #b7e336;
+    }
+
+    .mm-footer-logo img {
+        width: 48px;
+        height: 48px;
+        object-fit: contain;
+    }
+
+    .mm-footer-logo span {
+        font-size: 1.2rem;
+        font-weight: 850;
+        letter-spacing: 0.3px;
+    }
+
+.mm-footer-brand p {
+    max-width: 390px;
+    margin: 16px 0 0;
+    color: rgba(220, 226, 222, 0.58);
+    font-size: 0.87rem;
+    line-height: 1.75;
+}
+
+.mm-footer-links {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 13px 28px;
+}
+
+    .mm-footer-links a {
+        position: relative;
+        color: rgba(235, 240, 236, 0.68);
+        font-size: 0.86rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: color 0.25s ease;
+    }
+
+        .mm-footer-links a:hover {
+            color: #b7e336;
+        }
+
+.mm-footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px 0 24px;
+    border-top: 1px solid rgba(183, 227, 54, 0.08);
+}
+
+    .mm-footer-bottom span,
+    .mm-footer-bottom a {
+        color: rgba(220, 226, 222, 0.42);
+        font-size: 0.78rem;
+    }
+
+    .mm-footer-bottom a {
+        text-decoration: none;
+    }
+
+        .mm-footer-bottom a:hover {
+            color: #b7e336;
+        }
+
+@media (max-width: 767px) {
+    .mm-footer-main {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 28px;
+        padding: 38px 0 28px;
+    }
+
+    .mm-footer-links {
+        justify-content: flex-start;
+        gap: 12px 22px;
+    }
+
+    .mm-footer-bottom {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 576px) {
+    .mm-footer-logo img {
+        width: 42px;
+        height: 42px;
+    }
+
+    .mm-footer-links {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+.mm-footer-links a,
+.mm-footer-bottom a {
+    color: rgba(220, 226, 222, 0.62) !important;
+    text-decoration: none !important;
+}
+
+    .mm-footer-links a:hover,
+    .mm-footer-bottom a:hover {
+        color: #b7e336 !important;
+    }

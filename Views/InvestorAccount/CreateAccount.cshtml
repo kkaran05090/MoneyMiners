@@ -1,0 +1,151 @@
+﻿@model MoneyMiners.ViewModels.Investor.InvestorOtpRequestViewModel
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Create Investor Account";
+}
+
+<section class="mm-investor-auth-page">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-xl-5 col-lg-6 col-md-8">
+
+                <div class="mm-investor-auth-card">
+                    <div class="p-4 p-md-5">
+
+                        <div class="mm-investor-auth-header">
+
+                            <div class="mm-investor-auth-icon">
+                                <i class="bi bi-person-plus-fill"></i>
+                            </div>
+
+                            <span class="mm-investor-auth-kicker">
+                                Investor Registration
+                            </span>
+
+                            <h1 class="mm-investor-auth-title">
+                                Create Your Account
+                            </h1>
+
+                            <p class="mm-investor-auth-copy">
+                                Enter your mobile number to begin
+                                secure investor registration.
+                            </p>
+
+                        </div>
+
+                        <form asp-controller="InvestorAccount"
+                              asp-action="CreateAccount"
+                              method="post"
+                              class="mm-investor-auth-form"
+                              novalidate>
+
+                            @Html.AntiForgeryToken()
+
+                            <div asp-validation-summary="ModelOnly"
+                                 class="alert alert-danger"
+                                 role="alert">
+                            </div>
+
+                            <div class="mb-4">
+
+                                <label asp-for="PhoneNumber"
+                                       class="form-label">
+                                </label>
+
+                                <div class="input-group input-group-lg">
+
+                                    <span class="input-group-text">
+                                        +91
+                                    </span>
+
+                                    <input asp-for="PhoneNumber"
+                                           class="form-control"
+                                           inputmode="numeric"
+                                           autocomplete="tel"
+                                           maxlength="10"
+                                           placeholder="Enter 10-digit mobile number" />
+
+                                </div>
+
+                                <span asp-validation-for="PhoneNumber"
+                                      class="text-danger small">
+                                </span>
+
+                                <div class="form-text mt-2">
+                                    A six-digit verification OTP will be
+                                    generated and remain valid for five minutes.
+                                </div>
+
+                            </div>
+
+                            <button type="submit"
+                                    class="btn mm-investor-auth-primary w-100">
+
+                                <i class="bi bi-shield-check me-2"></i>
+                                Send Verification OTP
+
+                            </button>
+
+                        </form>
+
+                        <div class="text-center mt-4">
+
+                            <p class="text-muted mb-3">
+                                Already have an investor account?
+                            </p>
+
+                            <a asp-controller="InvestorAccount"
+                               asp-action="Login"
+                               class="btn mm-investor-auth-secondary
+                                d-flex justify-content-center
+                                align-items-center gap-2 w-100">
+
+                                <i class="bi bi-box-arrow-in-right"></i>
+                                Investor Login
+
+                            </a>
+
+                        </div>
+
+                        <hr class="mm-investor-auth-divider" />
+
+                        <div class="mm-investor-auth-security">
+
+                            <i class="bi bi-lock-fill"></i>
+
+                            <p>
+                                Your mobile number and personal information
+                                are protected and used only for account
+                                verification and investor services.
+                            </p>
+
+                        </div>
+
+                        <div class="text-center mt-4">
+
+                            <a asp-controller="Home"
+                               asp-action="Index"
+                               class="mm-investor-auth-link">
+
+                                <i class="bi bi-arrow-left me-1"></i>
+                                Back to Home
+
+                            </a>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

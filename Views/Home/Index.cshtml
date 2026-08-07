@@ -1,0 +1,1152 @@
+﻿@model MoneyMiners.Models.ContactMessage
+@using Microsoft.AspNetCore.Authentication
+@inject IConfiguration Configuration
+@{
+    ViewData["Title"] = "Home";
+
+    var whatsappNumber =
+        Configuration["WhatsApp:BusinessNumber"];
+
+    var investorAuthentication =
+        await Context.AuthenticateAsync("InvestorCookie");
+
+    var investorCode =
+        investorAuthentication.Succeeded
+            ? investorAuthentication.Principal?
+                .FindFirst("InvestorCode")?.Value
+            : null;
+
+    var investorIdLine =
+        !string.IsNullOrWhiteSpace(investorCode)
+            ? $"\nInvestor ID: {investorCode}\n"
+            : string.Empty;
+
+    var silverMessage = Uri.EscapeDataString(
+        "Hello Money Miners,\n\n" +
+        "I am interested in the Silver Investment Plan.\n" +
+        investorIdLine +
+        "\nPlease guide me regarding the investment process and payment.");
+
+    var goldMessage = Uri.EscapeDataString(
+        "Hello Money Miners,\n\n" +
+        "I am interested in the Gold Investment Plan.\n" +
+        investorIdLine +
+        "\nPlease guide me regarding the investment process and payment.");
+
+    var platinumMessage = Uri.EscapeDataString(
+        "Hello Money Miners,\n\n" +
+        "I am interested in the Platinum Investment Plan.\n" +
+        investorIdLine +
+        "\nPlease guide me regarding the investment process and payment.");
+
+    var silverWhatsAppUrl =
+        $"https://wa.me/{whatsappNumber}?text={silverMessage}";
+
+    var goldWhatsAppUrl =
+        $"https://wa.me/{whatsappNumber}?text={goldMessage}";
+
+    var platinumWhatsAppUrl =
+        $"https://wa.me/{whatsappNumber}?text={platinumMessage}";
+}
+
+<section class="mm-home">
+
+    <section class="mm-hero">
+
+        <div class="mm-hero-city"></div>
+        <div class="mm-hero-overlay"></div>
+        <div class="mm-hero-dots"></div>
+
+        <div class="container position-relative">
+
+            <div class="row align-items-center">
+
+                <!-- Left Content -->
+                <div class="col-lg-5">
+
+                    <div class="mm-hero-badge">
+                        <i class="bi bi-shield-check"></i>
+                        Secure · Transparent · Trusted
+                    </div>
+
+                    <h1 class="mm-hero-title">
+                        <span class="mm-title-white">Invest Smarter.</span>
+                        <span class="mm-title-white">Build Your</span>
+                        <span class="mm-title-green">Financial Future.</span>
+                    </h1>
+
+                    <p class="mm-hero-description">
+                        Money Miners offers professionally managed,
+                        trading-based investment opportunities with
+                        transparent reporting and a secure investor experience.
+                    </p>
+
+                    <div class="mm-hero-actions">
+
+                        <a href="#" class="btn mm-hero-primary">
+                            Create Investor Account
+                            <i class="bi bi-arrow-up-right"></i>
+                        </a>
+
+                        <a href="#" class="btn mm-hero-secondary">
+                            <i class="bi bi-person"></i>
+                            Investor Login
+                        </a>
+
+                    </div>
+
+                </div>
+                <!-- Right Bull Visual -->
+                <div class="col-lg-7">
+
+                    <div class="mm-bull-stage"
+                         id="mmBullStage">
+
+                        <div class="mm-bull-chart"></div>
+                        <div class="mm-bull-glow"></div>
+
+                        <img src="~/images/hero/money-miners-bull.png"
+                             asp-append-version="true"
+                             alt="Money Miners bull"
+                             class="mm-bull-image"
+                             id="mmBullImage" />
+
+                        <div class="mm-performance-card">
+
+                            <small>Portfolio Growth</small>
+                            <strong>Performance Tracking</strong>
+
+                            <div class="mm-performance-chart">
+
+                                <svg viewBox="0 0 260 100"
+                                     preserveAspectRatio="none"
+                                     aria-hidden="true">
+
+                                    <defs>
+                                        <linearGradient id="performanceLineGradient"
+                                                        x1="0%"
+                                                        y1="100%"
+                                                        x2="100%"
+                                                        y2="0%">
+                                            <stop offset="0%"
+                                                  stop-color="#84b91c" />
+                                            <stop offset="55%"
+                                                  stop-color="#b7e336" />
+                                            <stop offset="100%"
+                                                  stop-color="#ddff72" />
+                                        </linearGradient>
+
+                                        <linearGradient id="performanceAreaGradient"
+                                                        x1="0%"
+                                                        y1="0%"
+                                                        x2="0%"
+                                                        y2="100%">
+                                            <stop offset="0%"
+                                                  stop-color="#b7e336"
+                                                  stop-opacity="0.24" />
+                                            <stop offset="100%"
+                                                  stop-color="#b7e336"
+                                                  stop-opacity="0" />
+                                        </linearGradient>
+
+                                        <marker id="performanceArrowHead"
+                                                markerWidth="9"
+                                                markerHeight="9"
+                                                refX="7"
+                                                refY="4.5"
+                                                orient="auto">
+                                            <path d="M0,0 L9,4.5 L0,9 Z"
+                                                  fill="#ddff72" />
+                                        </marker>
+                                    </defs>
+
+                                    <path class="mm-performance-area"
+                                          d="M10 82
+                                    L38 65
+                                    L66 76
+                                    L96 48
+                                    L126 63
+                                    L158 37
+                                    L187 48
+                                    L216 25
+                                    L242 12
+                                    L242 92
+                                    L10 92 Z" />
+
+                                    <path class="mm-performance-line"
+                                          d="M10 82
+                                    L38 65
+                                    L66 76
+                                    L96 48
+                                    L126 63
+                                    L158 37
+                                    L187 48
+                                    L216 25
+                                    L242 12"
+                                          marker-end="url(#performanceArrowHead)" />
+
+                                    <circle class="mm-performance-dot"
+                                            cx="38"
+                                            cy="65"
+                                            r="3" />
+
+                                    <circle class="mm-performance-dot"
+                                            cx="96"
+                                            cy="48"
+                                            r="3" />
+
+                                    <circle class="mm-performance-dot"
+                                            cx="158"
+                                            cy="37"
+                                            r="3" />
+
+                                    <circle class="mm-performance-dot"
+                                            cx="216"
+                                            cy="25"
+                                            r="3" />
+
+                                </svg>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Trust Features -->
+            <div class="mm-feature-strip">
+
+                <div class="mm-feature-item">
+                    <i class="bi bi-shield-check"></i>
+                    <div>
+                        <strong>Secure Platform</strong>
+                        <small>Protected investor information</small>
+                    </div>
+                </div>
+
+                <div class="mm-feature-item">
+                    <i class="bi bi-bar-chart-line"></i>
+                    <div>
+                        <strong>Clear Reporting</strong>
+                        <small>Investment and performance reports</small>
+                    </div>
+                </div>
+
+                <div class="mm-feature-item">
+                    <i class="bi bi-headset"></i>
+                    <div>
+                        <strong>Investor Support</strong>
+                        <small>Dedicated assistance when needed</small>
+                    </div>
+                </div>
+
+                <div class="mm-feature-item">
+                    <i class="bi bi-lock"></i>
+                    <div>
+                        <strong>Trusted &amp; Reliable</strong>
+                        <small>Transparent platform operations</small>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Statistics -->
+            <div class="mm-stats-strip">
+
+                <div class="mm-stat-item">
+                    <i class="bi bi-people"></i>
+                    <div>
+                        <strong>Verified Data</strong>
+                        <small>Investor information</small>
+                    </div>
+                </div>
+
+                <div class="mm-stat-item">
+                    <i class="bi bi-graph-up-arrow"></i>
+                    <div>
+                        <strong>Managed Strategies</strong>
+                        <small>Professional approach</small>
+                    </div>
+                </div>
+
+                <div class="mm-stat-item">
+                    <i class="bi bi-pie-chart"></i>
+                    <div>
+                        <strong>Clear Insights</strong>
+                        <small>Performance reporting</small>
+                    </div>
+                </div>
+
+                <div class="mm-stat-item">
+                    <i class="bi bi-shield-check"></i>
+                    <div>
+                        <strong>Secure Access</strong>
+                        <small>Protected investor portal</small>
+                    </div>
+                </div>
+
+                <div class="mm-stat-item">
+                    <i class="bi bi-clock"></i>
+                    <div>
+                        <strong>Support Access</strong>
+                        <small>Investor assistance</small>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Why Choose Money Miners -->
+    <section class="mm-why-section" id="about">
+
+        <div class="container">
+
+            <div class="mm-section-heading">
+                <span>Why Choose Money Miners</span>
+                <h2>Your Growth, Our Priority</h2>
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-md-6 col-xl-3">
+                    <article class="mm-why-card">
+
+                        <div class="mm-why-icon">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+
+                        <h3>Security First</h3>
+
+                        <p>
+                            Modern security practices designed to protect
+                            investor accounts and information.
+                        </p>
+
+                        <a href="#">
+                            Learn More
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+
+                    </article>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <article class="mm-why-card">
+
+                        <div class="mm-why-icon">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </div>
+
+                        <h3>Expert Management</h3>
+
+                        <p>
+                            Professionally managed strategies supported by
+                            structured processes and market research.
+                        </p>
+
+                        <a href="#">
+                            Learn More
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+
+                    </article>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <article class="mm-why-card">
+
+                        <div class="mm-why-icon">
+                            <i class="bi bi-pie-chart"></i>
+                        </div>
+
+                        <h3>Transparent Reports</h3>
+
+                        <p>
+                            Clear portfolio information and detailed reports
+                            available through the investor portal.
+                        </p>
+
+                        <a href="#">
+                            Learn More
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+
+                    </article>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <article class="mm-why-card">
+
+                        <div class="mm-why-icon">
+                            <i class="bi bi-headset"></i>
+                        </div>
+
+                        <h3>Dedicated Support</h3>
+
+                        <p>
+                            Investor support designed to help with accounts,
+                            reports and platform-related questions.
+                        </p>
+
+                        <a href="#">
+                            Learn More
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+
+                    </article>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+    <!-- Investment Plans -->
+    <section class="mm-plans-section" id="plans">
+
+        <div class="container">
+
+            <div class="mm-section-heading">
+                <span>Investment Plans</span>
+                <h2>Choose the Investment Plan That Fits Your Goals</h2>
+                <p>
+                    Review the available options and select a plan based on your
+                    investment objectives, preferred duration and risk profile.
+                </p>
+            </div>
+
+            <div class="row g-4">
+
+                <!-- Silver Plan -->
+                <div class="col-lg-4">
+                    <article class="mm-plan-card">
+
+                        <div class="mm-plan-header">
+                            <div class="mm-plan-icon">
+                                <i class="bi bi-gem"></i>
+                            </div>
+
+                            <span>Silver</span>
+                        </div>
+
+                        <h3>Silver Plan</h3>
+
+                        <div class="mm-plan-price">
+                            <strong>₹10,000</strong>
+                            <small>Minimum Investment</small>
+                        </div>
+
+                        <ul>
+                            <li>
+                                <i class="bi bi-check-circle-fill"></i>
+                                12-month illustrative duration
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle-fill"></i>
+                                Monthly portfolio report
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle-fill"></i>
+                                Secure investor portal
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle-fill"></i>
+                                Email investor support
+                            </li>
+                        </ul>
+
+                        <a href="@silverWhatsAppUrl"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="btn mm-plan-button">
+
+                            Invest Now
+                            <i class="bi bi-whatsapp"></i>
+
+                        </a>
+
+                    </article>
+                </div>
+
+                <!-- Gold Plan -->
+                <div class="col-lg-4">
+                    <article class="mm-plan-card mm-plan-featured">
+
+                        <div class="mm-plan-label">
+                            Most Popular
+                        </div>
+
+                        <div class="mm-plan-header">
+                            <div class="mm-plan-icon">
+                                <i class="bi bi-graph-up-arrow"></i>
+                            </div>
+
+                            <span>Gold</span>
+                        </div>
+
+                        <h3>Gold Plan</h3>
+
+                        <div class="mm-plan-price">
+                            <strong>₹50,000</strong>
+                            <small>Minimum Investment</small>
+                        </div>
+
+                        <ul>
+                            <li>
+                                <i class="bi bi-check-circle-fill"></i>
+                                24-month illustrative duration
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle-fill"></i>
+                                Detailed performance reports
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle-fill"></i>
+                                Priority investor support
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle-fill"></i>
+                                Dedicated account assistance
+                            </li>
+                        </ul>
+
+                        <a href="@goldWhatsAppUrl"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="btn mm-plan-button">
+
+                            Invest Now
+                            <i class="bi bi-whatsapp"></i>
+
+                        </a>
+
+                    </article>
+                </div>
+
+                <!-- Platinum Plan -->
+                <div class="col-lg-4">
+                    <article class="mm-plan-card">
+
+                        <div class="mm-plan-header">
+                            <div class="mm-plan-icon">
+                                <i class="bi bi-building"></i>
+                            </div>
+
+                            <span>Platinum</span>
+                        </div>
+
+                        <h3>Platinum Plan</h3>
+
+                        <div class="mm-plan-price">
+                            <strong>₹1,00,000</strong>
+                            <small>Minimum Investment</small>
+                        </div>
+
+                        <ul>
+                            <li>
+                                <i class="bi bi-check-circle-fill"></i>
+                                Flexible illustrative duration
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle-fill"></i>
+                                Advanced portfolio insights
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle-fill"></i>
+                                Premium investor support
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle-fill"></i>
+                                Relationship manager access
+                            </li>
+                        </ul>
+
+                        <a href="@platinumWhatsAppUrl"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="btn mm-plan-button">
+
+                            Invest Now
+                            <i class="bi bi-whatsapp"></i>
+
+                        </a>
+
+                    </article>
+                </div>
+
+            </div>
+
+            <p class="mm-plan-disclaimer">
+                Plan values and durations shown here are illustrative placeholders.
+                Final terms must be reviewed and approved before publication.
+                Investments involve risk.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- How It Works -->
+    <section class="mm-how-section" id="how-it-works">
+
+        <div class="container">
+
+            <div class="mm-section-heading">
+                <span>How It Works</span>
+
+                <h2>
+                    Start Your Investment Journey
+                    in Four Simple Steps
+                </h2>
+
+                <p>
+                    Create your account, choose an investment plan
+                    and track your portfolio through the secure investor portal.
+                </p>
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-md-6 col-xl-3">
+                    <article class="mm-how-card">
+
+                        <div class="mm-how-number">01</div>
+
+                        <div class="mm-how-icon">
+                            <i class="bi bi-person-plus"></i>
+                        </div>
+
+                        <h3>Create Account</h3>
+
+                        <p>
+                            Register your investor account using
+                            accurate personal and contact information.
+                        </p>
+
+                    </article>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <article class="mm-how-card">
+
+                        <div class="mm-how-number">02</div>
+
+                        <div class="mm-how-icon">
+                            <i class="bi bi-patch-check"></i>
+                        </div>
+
+                        <h3>Complete Verification</h3>
+
+                        <p>
+                            Submit the required information to complete
+                            the account verification process.
+                        </p>
+
+                    </article>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <article class="mm-how-card">
+
+                        <div class="mm-how-number">03</div>
+
+                        <div class="mm-how-icon">
+                            <i class="bi bi-bar-chart-line"></i>
+                        </div>
+
+                        <h3>Select a Plan</h3>
+
+                        <p>
+                            Review the available plans and select one
+                            that matches your investment goals.
+                        </p>
+
+                    </article>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <article class="mm-how-card">
+
+                        <div class="mm-how-number">04</div>
+
+                        <div class="mm-how-icon">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </div>
+
+                        <h3>Track Performance</h3>
+
+                        <p>
+                            Access reports and monitor portfolio
+                            information through your investor dashboard.
+                        </p>
+
+                    </article>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Frequently Asked Questions -->
+    <section class="mm-faq-section" id="faq">
+
+        <div class="container">
+
+            <div class="mm-section-heading">
+                <span>Frequently Asked Questions</span>
+
+                <h2>
+                    Everything You Need to Know
+                </h2>
+
+                <p>
+                    Find answers to common questions about accounts,
+                    investment plans, reporting and platform access.
+                </p>
+            </div>
+
+            <div class="mm-faq-wrapper">
+
+                <div class="accordion"
+                     id="moneyMinersFaq">
+
+                    <!-- Question 1 -->
+                    <div class="accordion-item mm-faq-item">
+
+                        <h3 class="accordion-header"
+                            id="faqHeadingOne">
+
+                            <button class="accordion-button mm-faq-button"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#faqCollapseOne"
+                                    aria-expanded="true"
+                                    aria-controls="faqCollapseOne">
+
+                                How do I create an investor account?
+
+                            </button>
+
+                        </h3>
+
+                        <div id="faqCollapseOne"
+                             class="accordion-collapse collapse show"
+                             aria-labelledby="faqHeadingOne"
+                             data-bs-parent="#moneyMinersFaq">
+
+                            <div class="accordion-body mm-faq-answer">
+                                Click the Create Account button and complete the
+                                registration form using accurate personal and
+                                contact information.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="accordion-item mm-faq-item">
+
+                        <h3 class="accordion-header"
+                            id="faqHeadingTwo">
+
+                            <button class="accordion-button collapsed mm-faq-button"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#faqCollapseTwo"
+                                    aria-expanded="false"
+                                    aria-controls="faqCollapseTwo">
+
+                                How can I select an investment plan?
+
+                            </button>
+
+                        </h3>
+
+                        <div id="faqCollapseTwo"
+                             class="accordion-collapse collapse"
+                             aria-labelledby="faqHeadingTwo"
+                             data-bs-parent="#moneyMinersFaq">
+
+                            <div class="accordion-body mm-faq-answer">
+                                Review the available plan details, minimum
+                                investment amounts, duration and included services
+                                before choosing an option that matches your goals.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="accordion-item mm-faq-item">
+
+                        <h3 class="accordion-header"
+                            id="faqHeadingThree">
+
+                            <button class="accordion-button collapsed mm-faq-button"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#faqCollapseThree"
+                                    aria-expanded="false"
+                                    aria-controls="faqCollapseThree">
+
+                                Where can I view portfolio reports?
+
+                            </button>
+
+                        </h3>
+
+                        <div id="faqCollapseThree"
+                             class="accordion-collapse collapse"
+                             aria-labelledby="faqHeadingThree"
+                             data-bs-parent="#moneyMinersFaq">
+
+                            <div class="accordion-body mm-faq-answer">
+                                Portfolio information and available performance
+                                reports can be viewed through your secure investor
+                                dashboard after login.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div class="accordion-item mm-faq-item">
+
+                        <h3 class="accordion-header"
+                            id="faqHeadingFour">
+
+                            <button class="accordion-button collapsed mm-faq-button"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#faqCollapseFour"
+                                    aria-expanded="false"
+                                    aria-controls="faqCollapseFour">
+
+                                Is my account information protected?
+
+                            </button>
+
+                        </h3>
+
+                        <div id="faqCollapseFour"
+                             class="accordion-collapse collapse"
+                             aria-labelledby="faqHeadingFour"
+                             data-bs-parent="#moneyMinersFaq">
+
+                            <div class="accordion-body mm-faq-answer">
+                                The platform is designed with secure access
+                                controls and modern practices to help protect
+                                investor account information.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div class="accordion-item mm-faq-item">
+
+                        <h3 class="accordion-header"
+                            id="faqHeadingFive">
+
+                            <button class="accordion-button collapsed mm-faq-button"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#faqCollapseFive"
+                                    aria-expanded="false"
+                                    aria-controls="faqCollapseFive">
+
+                                How can I contact investor support?
+
+                            </button>
+
+                        </h3>
+
+                        <div id="faqCollapseFive"
+                             class="accordion-collapse collapse"
+                             aria-labelledby="faqHeadingFive"
+                             data-bs-parent="#moneyMinersFaq">
+
+                            <div class="accordion-body mm-faq-answer">
+                                You can contact the support team through the
+                                platform contact section for account, reporting
+                                or general assistance.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- Contact Section -->
+    <section class="mm-contact-section" id="contact">
+
+        <div class="container">
+
+            <div class="mm-section-heading">
+                <span>Contact Us</span>
+
+                <h2>Let’s Start a Conversation</h2>
+
+                <p>
+                    Have questions about your account, investment plans
+                    or platform access? Send us a message.
+                </p>
+            </div>
+
+            <div class="row g-4 align-items-stretch">
+
+                <!-- Contact Information -->
+                <div class="col-lg-5">
+
+                    <div class="mm-contact-info">
+
+                        <div class="mm-contact-info-header">
+                            <span>Investor Support</span>
+                            <h3>We’re Here to Help</h3>
+
+                            <p>
+                                Contact our support team for assistance with
+                                registration, reporting and account access.
+                            </p>
+                        </div>
+
+                        <div class="mm-contact-detail">
+
+                            <div class="mm-contact-icon">
+                                <i class="bi bi-envelope"></i>
+                            </div>
+
+                            <div>
+                                <small>Email Support</small>
+                                <strong>support@moneyminers.com</strong>
+                            </div>
+
+                        </div>
+
+                        <div class="mm-contact-detail">
+
+                            <div class="mm-contact-icon">
+                                <i class="bi bi-telephone"></i>
+                            </div>
+
+                            <div>
+                                <small>Phone Support</small>
+                                <strong>+91 98765 43210</strong>
+                            </div>
+
+                        </div>
+
+                        <div class="mm-contact-detail">
+
+                            <div class="mm-contact-icon">
+                                <i class="bi bi-clock"></i>
+                            </div>
+
+                            <div>
+                                <small>Support Hours</small>
+                                <strong>Monday – Saturday, 9 AM – 6 PM</strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Contact Form -->
+                <div class="col-lg-7">
+
+                    <form asp-controller="Home"
+                          asp-action="Contact"
+                          method="post"
+                          class="mm-contact-form">
+
+                        @Html.AntiForgeryToken()
+
+                        @if (TempData["ContactSuccess"] is string successMessage)
+                        {
+                            <div id="contactSuccessAlert"
+                                 class="alert alert-success mb-4">
+
+                                @successMessage
+
+                            </div>
+                        }
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3">
+                        </div>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+
+                                <label asp-for="FullName"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="FullName"
+                                       class="form-control"
+                                       placeholder="Enter your name" />
+
+                                <span asp-validation-for="FullName"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <label asp-for="Email"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Email"
+                                       class="form-control"
+                                       placeholder="Enter your email" />
+
+                                <span asp-validation-for="Email"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <label asp-for="PhoneNumber"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="PhoneNumber"
+                                       class="form-control"
+                                       placeholder="Enter your phone number" />
+
+                                <span asp-validation-for="PhoneNumber"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <label asp-for="Subject"
+                                       class="form-label">
+                                </label>
+
+                                <select asp-for="Subject"
+                                        class="form-select">
+
+                                    <option value="">
+                                        Select a subject
+                                    </option>
+
+                                    <option value="Account Registration">
+                                        Account Registration
+                                    </option>
+
+                                    <option value="Investment Plans">
+                                        Investment Plans
+                                    </option>
+
+                                    <option value="Investor Dashboard">
+                                        Investor Dashboard
+                                    </option>
+
+                                    <option value="Reports and Performance">
+                                        Reports and Performance
+                                    </option>
+
+                                    <option value="General Support">
+                                        General Support
+                                    </option>
+
+                                </select>
+
+                                <span asp-validation-for="Subject"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+                            <div class="col-12">
+
+                                <label asp-for="Message"
+                                       class="form-label">
+                                </label>
+
+                                <textarea asp-for="Message"
+                                          class="form-control"
+                                          rows="5"
+                                          placeholder="How can we help you?"></textarea>
+
+                                <span asp-validation-for="Message"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+                            <div class="col-12">
+
+                                <button type="submit"
+                                        class="btn mm-contact-submit">
+
+                                    Send Message
+                                    <i class="bi bi-send"></i>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+</section>
+
+@if (ViewData["ScrollToContact"] as bool? == true)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const contactSection =
+                document.getElementById("contact");
+
+            if (contactSection) {
+                contactSection.scrollIntoView({
+                    behavior: "auto",
+                    block: "start"
+                });
+            }
+        });
+    </script>
+}

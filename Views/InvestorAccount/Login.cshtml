@@ -1,0 +1,252 @@
+﻿@model MoneyMiners.ViewModels.Investor.InvestorLoginViewModel
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Investor Login";
+}
+
+<section class="mm-investor-auth-page">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-xl-5 col-lg-6 col-md-8">
+
+                <div class="mm-investor-auth-card">
+                    <div class="p-4 p-md-5">
+
+                        <div class="mm-investor-auth-header">
+
+                            <div class="mm-investor-auth-icon">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+
+                            <span class="mm-investor-auth-kicker">
+                                Secure Investor Portal
+                            </span>
+
+                            <h1 class="mm-investor-auth-title">
+                                Investor Login
+                            </h1>
+
+                            <p class="mm-investor-auth-copy">
+                                Sign in using your Investor ID
+                                or registered mobile number.
+                            </p>
+
+                        </div>
+
+                        @if (TempData["InvestorPasswordResetSuccess"] is string successMessage)
+                        {
+                            <div class="alert alert-success mb-4">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                @successMessage
+                            </div>
+                        }
+
+
+                        <form asp-controller="InvestorAccount"
+                              asp-action="Login"
+                              method="post"
+                              class="mm-investor-auth-form"
+                              novalidate>
+
+                            @Html.AntiForgeryToken()
+
+                            <input asp-for="ReturnUrl"
+                                   type="hidden" />
+
+                            <div asp-validation-summary="ModelOnly"
+                                 class="alert alert-danger"
+                                 role="alert">
+                            </div>
+
+                            <div class="mb-3">
+
+                                <label asp-for="LoginIdentifier"
+                                       class="form-label">
+                                </label>
+
+                                <div class="input-group input-group-lg">
+
+                                    <span class="input-group-text">
+                                        <i class="bi bi-person-vcard"></i>
+                                    </span>
+
+                                    <input asp-for="LoginIdentifier"
+                                           class="form-control"
+                                           autocomplete="username"
+                                           placeholder="Investor ID or mobile number" />
+
+                                </div>
+
+                                <span asp-validation-for="LoginIdentifier"
+                                      class="text-danger small">
+                                </span>
+
+                            </div>
+
+                            <div class="mb-3">
+
+                                <label asp-for="Password"
+                                       class="form-label">
+                                </label>
+
+                                <div class="input-group input-group-lg">
+
+                                    <span class="input-group-text">
+                                        <i class="bi bi-lock-fill"></i>
+                                    </span>
+
+                                    <input asp-for="Password"
+                                           class="form-control"
+                                           autocomplete="current-password"
+                                           placeholder="Enter your password" />
+
+                                    <button type="button"
+                                            id="passwordToggle"
+                                            class="btn"
+                                            aria-label="Show password">
+
+                                        <i class="bi bi-eye"></i>
+
+                                    </button>
+
+                                </div>
+
+                                <span asp-validation-for="Password"
+                                      class="text-danger small">
+                                </span>
+
+                            </div>
+
+                            <div class="d-flex flex-wrap
+                                justify-content-between
+                                align-items-center
+                                gap-3 mb-4">
+
+                                <div class="form-check">
+
+                                    <input asp-for="RememberMe"
+                                           class="form-check-input" />
+
+                                    <label asp-for="RememberMe"
+                                           class="form-check-label">
+                                    </label>
+
+                                </div>
+
+                                <a asp-controller="InvestorAccount"
+                                   asp-action="ForgotPassword"
+                                   class="mm-investor-auth-link">
+
+                                    Forgot Password?
+
+                                </a>
+
+                            </div>
+
+                            <button type="submit"
+                                    class="btn mm-investor-auth-primary w-100">
+
+                                <i class="bi bi-box-arrow-in-right me-2"></i>
+                                Login to Dashboard
+
+                            </button>
+
+                        </form>
+
+                        <div class="text-center mt-4">
+
+                            <p class="text-muted mb-3">
+                                Do not have an investor account?
+                            </p>
+
+                            <a asp-controller="InvestorAccount"
+                               asp-action="CreateAccount"
+                               class="btn mm-investor-auth-secondary
+                                d-flex justify-content-center
+                                align-items-center gap-2 w-100">
+
+                                <i class="bi bi-person-plus-fill"></i>
+                                Create Investor Account
+
+                            </a>
+
+                        </div>
+
+                        <hr class="mm-investor-auth-divider" />
+
+                        <div class="mm-investor-auth-security">
+
+                            <i class="bi bi-shield-lock-fill"></i>
+
+                            <p>
+                                Your account is protected with secure password
+                                hashing, login-attempt monitoring and temporary
+                                account lockout protection.
+                            </p>
+
+                        </div>
+
+                        <div class="text-center mt-4">
+
+                            <a asp-controller="Home"
+                               asp-action="Index"
+                               class="mm-investor-auth-link">
+
+                                <i class="bi bi-arrow-left me-1"></i>
+                                Back to Home
+
+                            </a>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const passwordToggle =
+            document.getElementById("passwordToggle");
+
+        const passwordInput =
+            document.getElementById("Password");
+
+        passwordToggle?.addEventListener(
+            "click",
+            function() {
+                if (!passwordInput) {
+                    return;
+                }
+
+                const showPassword =
+                    passwordInput.type === "password";
+
+                passwordInput.type =
+                    showPassword ? "text" : "password";
+
+                const icon =
+                    passwordToggle.querySelector("i");
+
+                icon.className =
+                    showPassword
+                        ? "bi bi-eye-slash"
+                        : "bi bi-eye";
+
+                passwordToggle.setAttribute(
+                    "aria-label",
+                    showPassword
+                        ? "Hide password"
+                        : "Show password");
+            });
+    </script>
+}

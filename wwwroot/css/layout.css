@@ -1,0 +1,252 @@
+﻿/* =========================
+   MONEY MINERS NAVBAR
+========================= */
+
+.mm-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.mm-navbar {
+    min-height: 82px;
+    padding: 10px 0;
+    background: rgba(5, 8, 6, 0.88);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+.mm-brand {
+    display: flex;
+    align-items: center;
+}
+
+.mm-logo {
+    width: 185px;
+    height: 52px;
+    object-fit: contain;
+}
+
+.mm-navbar .nav-link {
+    position: relative;
+    margin: 0 5px;
+    padding: 10px 12px !important;
+    color: rgba(255, 255, 255, 0.75) !important;
+    font-size: 0.92rem;
+    font-weight: 500;
+    transition: 0.3s ease;
+}
+
+    .mm-navbar .nav-link::after {
+        content: "";
+        position: absolute;
+        left: 12px;
+        right: 12px;
+        bottom: 3px;
+        height: 2px;
+        border-radius: 10px;
+        background: var(--mm-primary);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .mm-navbar .nav-link:hover,
+    .mm-navbar .nav-link.active {
+        color: #ffffff !important;
+    }
+
+        .mm-navbar .nav-link:hover::after,
+        .mm-navbar .nav-link.active::after {
+            transform: scaleX(1);
+        }
+
+.mm-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mm-login-btn,
+.mm-register-btn {
+    padding: 10px 17px;
+    border-radius: var(--mm-radius-sm);
+    font-size: 0.86rem;
+    font-weight: 650;
+    transition: 0.3s ease;
+}
+
+.mm-login-btn {
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.04);
+    color: #ffffff;
+}
+
+    .mm-login-btn:hover {
+        border-color: rgba(255, 255, 255, 0.50);
+        background: rgba(255, 255, 255, 0.10);
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
+
+.mm-register-btn {
+    border: 1px solid var(--mm-primary);
+    background: var(--mm-primary);
+    color: #071006;
+    box-shadow: 0 10px 25px var(--mm-glow);
+}
+
+    .mm-register-btn:hover {
+        border-color: #d2f56b;
+        background: #d2f56b;
+        color: #071006;
+        transform: translateY(-2px);
+        box-shadow: 0 14px 32px rgba(183, 227, 54, 0.30);
+    }
+
+.mm-navbar .navbar-toggler {
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    box-shadow: none;
+}
+
+@media (max-width: 991px) {
+
+    .mm-navbar .navbar-collapse {
+        margin-top: 14px;
+        padding: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.10);
+        border-radius: var(--mm-radius-md);
+        background: rgba(8, 14, 10, 0.97);
+        box-shadow: var(--mm-shadow);
+    }
+
+    .mm-nav-actions {
+        flex-direction: column;
+        align-items: stretch;
+        margin-top: 15px;
+    }
+
+    .mm-login-btn,
+    .mm-register-btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .mm-logo {
+        width: 150px;
+        height: 45px;
+    }
+}
+
+.mm-logo {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+.mm-brand {
+    gap: 11px;
+}
+
+.mm-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mm-logo {
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+}
+
+.mm-brand-wordmark {
+    display: flex;
+    flex-direction: column;
+    color: #ffffff;
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 700;
+    line-height: 0.86;
+    letter-spacing: 2px;
+}
+
+.mm-brand-line {
+    display: block;
+    font-size: 1.18rem;
+}
+
+.mm-money-o {
+    position: relative;
+    display: inline-block;
+}
+
+    .mm-money-o > span {
+        position: absolute;
+        top: 48%;
+        left: 50%;
+        color: var(--mm-primary);
+        font-family: Arial, sans-serif;
+        font-size: 0.42em;
+        transform: translate(-50%, -50%);
+    }
+
+@media (max-width: 576px) {
+    .mm-logo {
+        width: 44px;
+        height: 44px;
+    }
+
+    .mm-brand-line {
+        font-size: 0.98rem;
+    }
+}
+
+    .mm-brand-name strong {
+        color: #ffffff;
+        font-size: 1.15rem;
+        font-weight: 700;
+    }
+
+    .mm-brand-name small {
+        margin-top: 6px;
+        color: var(--mm-primary);
+        font-size: 0.6rem;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+    }
+
+.mm-admin-btn {
+    padding: 10px 17px;
+    border: 1px solid rgba(183, 227, 54, 0.35);
+    border-radius: var(--mm-radius-sm);
+    background: rgba(183, 227, 54, 0.07);
+    color: var(--mm-primary);
+    font-size: 0.86rem;
+    font-weight: 650;
+    transition: 0.3s ease;
+}
+
+    .mm-admin-btn:hover {
+        border-color: var(--mm-primary);
+        background: rgba(183, 227, 54, 0.14);
+        color: #dfff82;
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(183, 227, 54, 0.14);
+    }
+
+.mm-nav-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+@media (max-width: 991px) {
+    .mm-admin-btn {
+        width: 100%;
+    }
+}

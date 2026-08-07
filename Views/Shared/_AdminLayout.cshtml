@@ -1,0 +1,363 @@
+﻿@{
+    var currentController =
+        ViewContext.RouteData.Values["controller"]?
+            .ToString();
+
+    var currentAction =
+        ViewContext.RouteData.Values["action"]?
+            .ToString();
+
+    var isSuperAdmin =
+        User.IsInRole("SuperAdmin");
+
+    var displayName =
+        User.Identity?.Name ?? "Administrator";
+
+    var roleName =
+        isSuperAdmin ? "SuperAdmin" : "Admin";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - Money Miners Admin
+    </title>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/theme.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/admin.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/MoneyMiners.styles.css"
+          asp-append-version="true" />
+</head>
+
+<body class="mm-admin-shell-body">
+
+    <div class="mm-admin-shell">
+
+        <!-- Sidebar -->
+        <aside class="mm-admin-sidebar"
+               id="adminSidebar">
+
+            <div class="mm-admin-sidebar-header">
+
+                <a asp-controller="Admin"
+                   asp-action="Dashboard"
+                   class="mm-admin-sidebar-brand">
+
+                    <img src="~/images/branding/money-miners-logo.png"
+                         asp-append-version="true"
+                         alt="Money Miners" />
+
+                    <div>
+                        <strong>Money Miners</strong>
+                        <span>@roleName Portal</span>
+                    </div>
+
+                </a>
+
+                <button type="button"
+                        class="mm-admin-sidebar-close"
+                        id="closeAdminSidebar"
+                        aria-label="Close navigation">
+
+                    <i class="bi bi-x-lg"></i>
+
+                </button>
+
+            </div>
+
+            <nav class="mm-admin-sidebar-nav"
+                 aria-label="Administration navigation">
+
+                <span class="mm-admin-sidebar-label">
+                    MAIN MENU
+                </span>
+
+                <a asp-controller="Admin"
+                   asp-action="Dashboard"
+                   class="mm-admin-nav-link
+                    @(currentController == "Admin" &&
+                     currentAction == "Dashboard"
+                         ? "is-active"
+                         : "")">
+
+                    <i class="bi bi-grid-1x2"></i>
+                    <span>Dashboard</span>
+
+                </a>
+
+                <a asp-controller="Admin"
+                   asp-action="Index"
+                   class="mm-admin-nav-link
+                    @(currentController == "Admin" &&
+                     currentAction == "Index"
+                         ? "is-active"
+                         : "")">
+
+                    <i class="bi bi-envelope-paper"></i>
+                    <span>Contact Messages</span>
+
+                </a>
+
+                <a asp-controller="Investors"
+                   asp-action="Index"
+                   class="mm-admin-nav-link
+                    @(currentController == "Investors"
+                         ? "is-active"
+                         : "")">
+
+                    <i class="bi bi-person-vcard"></i>
+                    <span>Investors</span>
+
+                </a>
+
+                <span class="mm-admin-nav-link is-disabled">
+
+                    <i class="bi bi-wallet2"></i>
+                    <span>Payments</span>
+
+                    <small>Soon</small>
+
+                </span>
+
+                <span class="mm-admin-nav-link is-disabled">
+
+                    <i class="bi bi-bar-chart-line"></i>
+                    <span>Reports</span>
+
+                    <small>Soon</small>
+
+                </span>
+
+                @if (isSuperAdmin)
+                {
+                    <span class="mm-admin-sidebar-label">
+                        SUPERADMIN
+                    </span>
+
+                    <a asp-controller="AdminUsers"
+                       asp-action="Index"
+                       class="mm-admin-nav-link
+                        @(currentController == "AdminUsers"
+                             ? "is-active"
+                             : "")">
+
+                        <i class="bi bi-people"></i>
+                        <span>Admin Management</span>
+
+                    </a>
+
+                    <a asp-controller="AdminInvestments"
+                       asp-action="Assign"
+                       class="mm-admin-nav-link
+                        @(currentController == "AdminInvestments"
+                            ? "is-active"
+                            : "")">
+
+                        <i class="bi bi-cash-stack"></i>
+                        <span>Assign Investment</span>
+
+                    </a>
+
+                    <span class="mm-admin-nav-link is-disabled">
+
+                        <i class="bi bi-gear"></i>
+                        <span>System Settings</span>
+
+                        <small>Soon</small>
+
+                    </span>
+
+                    <span class="mm-admin-nav-link is-disabled">
+
+                        <i class="bi bi-shield-check"></i>
+                        <span>Audit Logs</span>
+
+                        <small>Soon</small>
+
+                    </span>
+                }
+
+            </nav>
+
+            <div class="mm-admin-sidebar-footer">
+
+                <div class="mm-admin-sidebar-user">
+
+                    <div class="mm-admin-user-avatar">
+                        @displayName.Substring(0, 1).ToUpper()
+                    </div>
+
+                    <div>
+                        <strong>@displayName</strong>
+                        <span>@roleName</span>
+                    </div>
+
+                </div>
+
+                <form asp-controller="AdminAccount"
+                      asp-action="Logout"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <button type="submit"
+                            class="mm-admin-sidebar-logout">
+
+                        <i class="bi bi-box-arrow-right"></i>
+                        Logout
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </aside>
+
+        <!-- Main Area -->
+        <div class="mm-admin-main">
+
+            <header class="mm-admin-topbar">
+
+                <button type="button"
+                        class="mm-admin-menu-button"
+                        id="openAdminSidebar"
+                        aria-label="Open navigation">
+
+                    <i class="bi bi-list"></i>
+
+                </button>
+
+                <div class="mm-admin-topbar-title">
+
+                    <span>
+                        @(isSuperAdmin
+                            ? "SuperAdmin Portal"
+                            : "Admin Portal")
+                    </span>
+
+                    <strong>
+                        @ViewData["Title"]
+                    </strong>
+
+                </div>
+
+                <div class="mm-admin-topbar-actions">
+
+                    <a asp-controller="Home"
+                       asp-action="Index"
+                       class="mm-admin-view-site"
+                       target="_blank">
+
+                        <i class="bi bi-box-arrow-up-right"></i>
+                        View Website
+
+                    </a>
+
+                    <div class="mm-admin-topbar-user">
+
+                        <div>
+                            <strong>@displayName</strong>
+                            <span>@roleName</span>
+                        </div>
+
+                        <div class="mm-admin-user-avatar">
+                            @displayName.Substring(0, 1).ToUpper()
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+            <main class="mm-admin-content"
+                  role="main">
+
+                @RenderBody()
+
+            </main>
+
+        </div>
+
+        <div class="mm-admin-sidebar-overlay"
+             id="adminSidebarOverlay">
+        </div>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="~/js/site.js"
+            asp-append-version="true">
+    </script>
+
+    <script>
+            const adminSidebar =
+                document.getElementById("adminSidebar");
+
+            const sidebarOverlay =
+                document.getElementById("adminSidebarOverlay");
+
+            const openSidebarButton =
+                document.getElementById("openAdminSidebar");
+
+            const closeSidebarButton =
+                document.getElementById("closeAdminSidebar");
+
+            function openAdminSidebar() {
+                adminSidebar.classList.add("is-open");
+                sidebarOverlay.classList.add("is-visible");
+                document.body.classList.add("admin-menu-open");
+            }
+
+            function closeAdminSidebar() {
+                adminSidebar.classList.remove("is-open");
+                sidebarOverlay.classList.remove("is-visible");
+                document.body.classList.remove("admin-menu-open");
+            }
+
+            openSidebarButton?.addEventListener(
+                "click",
+                openAdminSidebar);
+
+            closeSidebarButton?.addEventListener(
+                "click",
+                closeAdminSidebar);
+
+            sidebarOverlay?.addEventListener(
+                "click",
+                closeAdminSidebar);
+    </script>
+
+    @await RenderSectionAsync(
+        "Scripts",
+        required: false)
+
+</body>
+</html>
