@@ -396,15 +396,29 @@
                                     {
                                         <td>
 
-                                            <a asp-controller="AdminInvestments"
-                                               asp-action="Assign"
-                                               asp-route-investorCode="@investor.InvestorCode"
-                                               class="btn mm-admin-filter-button btn-sm">
+                                            <div class="d-flex gap-2">
 
-                                                <i class="bi bi-cash-stack"></i>
-                                                Assign
+                                                <a asp-controller="AdminInvestments"
+                                                   asp-action="Manage"
+                                                   asp-route-investorCode="@investor.InvestorCode"
+                                                   class="btn mm-admin-reset-button btn-sm">
 
-                                            </a>
+                                                    <i class="bi bi-eye"></i>
+                                                    Manage
+
+                                                </a>
+
+                                                <a asp-controller="AdminInvestments"
+                                                   asp-action="Assign"
+                                                   asp-route-investorCode="@investor.InvestorCode"
+                                                   class="btn mm-admin-filter-button btn-sm">
+
+                                                    <i class="bi bi-plus-circle"></i>
+                                                    Assign
+
+                                                </a>
+
+                                            </div>
 
                                         </td>
                                     }

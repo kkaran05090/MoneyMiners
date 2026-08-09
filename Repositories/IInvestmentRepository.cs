@@ -18,6 +18,11 @@ namespace MoneyMiners.Repositories
                 long investorAccountId,
                 CancellationToken cancellationToken = default);
 
+        Task<List<AdminInvestorInvestmentItem>>
+            GetByInvestorAccountIdAsync(
+                long investorAccountId,
+                CancellationToken cancellationToken = default);
+
         Task ChangeStatusAsync(
             ChangeInvestmentStatusCommand command,
             CancellationToken cancellationToken = default);

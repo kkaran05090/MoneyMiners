@@ -80,6 +80,74 @@ namespace MoneyMiners.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Manage(
+    string investorCode,
+    CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(investorCode))
+            {
+                return RedirectToAction(
+                    "Index",
+                    "Investors");
+            }
+
+            var investor =
+                await _investorAccountRepository
+                    .GetByInvestorCodeAsync(
+                        investorCode.Trim(),
+                        cancellationToken);
+
+            if (investor == null)
+            {
+                TempData["InvestorError"] =
+                    "Investor was not found.";
+
+                return RedirectToAction(
+                    "Index",
+                    "Investors");
+            }
+
+            var investments =
+                await _investmentRepository
+                    .GetByInvestorAccountIdAsync(
+                        investor.InvestorAccountID,
+                        cancellationToken);
+
+            var model =
+                new ManageInvestorInvestmentsViewModel
+                {
+                    InvestorAccountID =
+                        investor.InvestorAccountID,
+
+                    InvestorCode =
+                        investor.InvestorCode,
+
+                    InvestorName =
+                        investor.DisplayName,
+
+                    PhoneNumber =
+                        investor.PhoneNumber,
+
+                    Email =
+                        investor.Email,
+
+                    AadhaarLast4 =
+                        investor.AadhaarLast4,
+
+                    IsActive =
+                        investor.IsActive,
+
+                    IsMobileVerified =
+                        investor.IsMobileVerified,
+
+                    Investments =
+                        investments
+                };
+
+            return View(model);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
@@ -279,6 +347,173 @@ namespace MoneyMiners.Controllers
                     "Assign",
                     model);
             }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeStatus(
+    long investmentId,
+    string investorCode,
+    string newStatus,
+    string? remarks,
+    CancellationToken cancellationToken)
+        {
+            if (investmentId <= 0 ||
+                string.IsNullOrWhiteSpace(investorCode))
+            {
+                return BadRequest();
+            }
+
+            if (newStatus != "Settled" &&
+                newStatus != "Closed" &&
+                newStatus != "Cancelled")
+            {
+                TempData["InvestmentError"] =
+                    "Invalid investment status.";
+
+                return RedirectToAction(
+                    nameof(Manage),
+                    new
+                    {
+                        investorCode
+                    });
+            }
+
+            // Cancellation reason is mandatory
+            if (newStatus == "Cancelled" &&
+                string.IsNullOrWhiteSpace(remarks))
+            {
+                TempData["InvestmentError"] =
+                    "Cancellation reason is required.";
+
+                return RedirectToAction(
+                    nameof(Manage),
+                    new
+                    {
+                        investorCode
+                    });
+            }
+
+            // Closure reason is mandatory
+            if (newStatus == "Closed" &&
+                string.IsNullOrWhiteSpace(remarks))
+            {
+                TempData["InvestmentError"] =
+                    "Closure reason is required.";
+
+                return RedirectToAction(
+                    nameof(Manage),
+                    new
+                    {
+                        investorCode
+                    });
+            }
+
+            if (!string.IsNullOrWhiteSpace(remarks) &&
+                remarks.Length > 500)
+            {
+                TempData["InvestmentError"] =
+                    "Remarks cannot exceed 500 characters.";
+
+                return RedirectToAction(
+                    nameof(Manage),
+                    new
+                    {
+                        investorCode
+                    });
+            }
+
+            // Logged-in SuperAdmin ID
+            var adminUserIdValue =
+                User.FindFirstValue(
+                    ClaimTypes.NameIdentifier);
+
+            if (!int.TryParse(
+                    adminUserIdValue,
+                    out var adminUserId) ||
+                adminUserId <= 0)
+            {
+                return Forbid();
+            }
+
+            // InvestorAccountID browser se trust nahi karenge.
+            // InvestorCode ke through database se actual account nikalenge.
+            var investor =
+                await _investorAccountRepository
+                    .GetByInvestorCodeAsync(
+                        investorCode.Trim(),
+                        cancellationToken);
+
+            if (investor == null)
+            {
+                TempData["InvestorError"] =
+                    "Investor was not found.";
+
+                return RedirectToAction(
+                    "Index",
+                    "Investors");
+            }
+
+            try
+            {
+                await _investmentRepository
+                    .ChangeStatusAsync(
+                        new ChangeInvestmentStatusCommand
+                        {
+                            InvestmentID =
+                                investmentId,
+
+                            InvestorAccountID =
+                                investor.InvestorAccountID,
+
+                            NewStatus =
+                                newStatus,
+
+                            Remarks =
+                                remarks,
+
+                            ChangedByAdminUserID =
+                                adminUserId
+                        },
+                        cancellationToken);
+
+                TempData["InvestmentSuccess"] =
+                    $"Investment status changed to {newStatus}.";
+            }
+            catch (SqlException exception)
+            {
+                TempData["InvestmentError"] =
+                    exception.Number switch
+                    {
+                        53501 =>
+                            "Invalid investment ID.",
+
+                        53502 =>
+                            "Administrator verification failed.",
+
+                        53503 =>
+                            "Invalid investment status.",
+
+                        53504 =>
+                            "Investment was not found for this investor.",
+
+                        53505 =>
+                            "Only an active investment can be changed.",
+
+                        53506 =>
+                            "Invalid investor account.",
+
+                        _ =>
+                            "Investment status could not be changed."
+                    };
+            }
+
+            return RedirectToAction(
+                nameof(Manage),
+                new
+                {
+                    investorCode
+                });
         }
 
         private static void FillInvestorDetails(

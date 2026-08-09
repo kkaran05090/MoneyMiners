@@ -4,8 +4,9 @@
     {
         public long InvestmentID { get; set; }
 
-        public string NewStatus { get; set; } =
-            string.Empty;
+        public long InvestorAccountID { get; set; }
+
+        public string NewStatus { get; set; } = string.Empty;
 
         public string? Remarks { get; set; }
 

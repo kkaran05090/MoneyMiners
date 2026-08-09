@@ -462,17 +462,199 @@ namespace MoneyMiners.Repositories
             return investments;
         }
 
-        public async Task ChangeStatusAsync(
-            ChangeInvestmentStatusCommand investment,
-            CancellationToken cancellationToken = default)
+        public async Task<List<AdminInvestorInvestmentItem>>
+        GetByInvestorAccountIdAsync(
+        long investorAccountId,
+        CancellationToken cancellationToken = default)
         {
-            ArgumentNullException.ThrowIfNull(
-                investment);
+            if (investorAccountId <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(investorAccountId));
+            }
+
+            var investments =
+                new List<AdminInvestorInvestmentItem>();
+
+            await using var connection =
+                new SqlConnection(_connectionString);
+
+            await using var command =
+                new SqlCommand(
+                    "dbo.usp_Investments_GetByInvestorAccountID",
+                    connection);
+
+            command.CommandType =
+                CommandType.StoredProcedure;
+
+            command.Parameters.Add(
+                "@InvestorAccountID",
+                SqlDbType.BigInt).Value =
+                investorAccountId;
+
+            await connection.OpenAsync(
+                cancellationToken);
+
+            await using var reader =
+                await command.ExecuteReaderAsync(
+                    cancellationToken);
+
+            var investmentIdOrdinal =
+                reader.GetOrdinal("InvestmentID");
+
+            var investmentCodeOrdinal =
+                reader.GetOrdinal("InvestmentCode");
+
+            var investorAccountIdOrdinal =
+                reader.GetOrdinal("InvestorAccountID");
+
+            var planNameOrdinal =
+                reader.GetOrdinal("PlanName");
+
+            var investedAmountOrdinal =
+                reader.GetOrdinal("InvestedAmount");
+
+            var startDateOrdinal =
+                reader.GetOrdinal("StartDate");
+
+            var endDateOrdinal =
+                reader.GetOrdinal("EndDate");
+
+            var durationMonthsOrdinal =
+                reader.GetOrdinal("DurationMonths");
+
+            var statusOrdinal =
+                reader.GetOrdinal("Status");
+
+            var paymentReferenceOrdinal =
+                reader.GetOrdinal("PaymentReference");
+
+            var remarksOrdinal =
+                reader.GetOrdinal("Remarks");
+
+            var createdByAdminUserIdOrdinal =
+                reader.GetOrdinal("CreatedByAdminUserID");
+
+            var createdAtUtcOrdinal =
+                reader.GetOrdinal("CreatedAtUtc");
+
+            var updatedAtUtcOrdinal =
+                reader.GetOrdinal("UpdatedAtUtc");
+
+            var closedAtUtcOrdinal =
+                reader.GetOrdinal("ClosedAtUtc");
+
+            while (await reader.ReadAsync(
+                       cancellationToken))
+            {
+                investments.Add(
+                    new AdminInvestorInvestmentItem
+                    {
+                        InvestmentID =
+                            reader.GetInt64(
+                                investmentIdOrdinal),
+
+                        InvestmentCode =
+                            reader.GetString(
+                                investmentCodeOrdinal),
+
+                        InvestorAccountID =
+                            reader.GetInt64(
+                                investorAccountIdOrdinal),
+
+                        PlanName =
+                            reader.GetString(
+                                planNameOrdinal),
+
+                        InvestedAmount =
+                            reader.GetDecimal(
+                                investedAmountOrdinal),
+
+                        StartDate =
+                            reader.GetDateTime(
+                                startDateOrdinal),
+
+                        EndDate =
+                            reader.GetDateTime(
+                                endDateOrdinal),
+
+                        DurationMonths =
+                            reader.GetInt16(
+                                durationMonthsOrdinal),
+
+                        Status =
+                            reader.GetString(
+                                statusOrdinal),
+
+                        PaymentReference =
+                            reader.IsDBNull(
+                                paymentReferenceOrdinal)
+                                ? null
+                                : reader.GetString(
+                                    paymentReferenceOrdinal),
+
+                        Remarks =
+                            reader.IsDBNull(
+                                remarksOrdinal)
+                                ? null
+                                : reader.GetString(
+                                    remarksOrdinal),
+
+                        CreatedByAdminUserID =
+                            reader.IsDBNull(
+                                createdByAdminUserIdOrdinal)
+                                ? null
+                                : reader.GetInt32(
+                                    createdByAdminUserIdOrdinal),
+
+                        CreatedAtUtc =
+                            reader.GetDateTime(
+                                createdAtUtcOrdinal),
+
+                        UpdatedAtUtc =
+                            reader.IsDBNull(
+                                updatedAtUtcOrdinal)
+                                ? null
+                                : reader.GetDateTime(
+                                    updatedAtUtcOrdinal),
+
+                        ClosedAtUtc =
+                            reader.IsDBNull(
+                                closedAtUtcOrdinal)
+                                ? null
+                                : reader.GetDateTime(
+                                    closedAtUtcOrdinal)
+                    });
+            }
+
+            return investments;
+        }
+
+
+
+        public async Task ChangeStatusAsync(
+     ChangeInvestmentStatusCommand investment,
+     CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(investment);
 
             if (investment.InvestmentID <= 0)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(investment.InvestmentID));
+            }
+
+            if (investment.InvestorAccountID <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(investment.InvestorAccountID));
+            }
+
+            if (string.IsNullOrWhiteSpace(investment.NewStatus))
+            {
+                throw new ArgumentException(
+                    "Investment status is required.",
+                    nameof(investment.NewStatus));
             }
 
             if (investment.ChangedByAdminUserID <= 0)
@@ -496,6 +678,11 @@ namespace MoneyMiners.Repositories
                 "@InvestmentID",
                 SqlDbType.BigInt).Value =
                 investment.InvestmentID;
+
+            command.Parameters.Add(
+                "@InvestorAccountID",
+                SqlDbType.BigInt).Value =
+                investment.InvestorAccountID;
 
             command.Parameters.Add(
                 "@NewStatus",
