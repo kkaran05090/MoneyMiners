@@ -1,13 +1,24 @@
-﻿@model MoneyMiners.ViewModels.Investor.InvestorOtpVerifyViewModel
+﻿@model MoneyMiners.ViewModels.Investor.InvestorEmailOtpVerifyViewModel
 
 @{
     Layout = "_Layout";
-    ViewData["Title"] = "Verify Mobile Number";
+    ViewData["Title"] = "Verify Email Address";
 
-    var maskedPhone =
-        Model.PhoneNumber.Length >= 4
-            ? $"******{Model.PhoneNumber[^4..]}"
-            : "****";
+    var emailAddress =
+        Model.EmailAddress ?? string.Empty;
+
+    var emailParts =
+        emailAddress.Split('@');
+
+    var maskedEmail =
+        emailAddress;
+
+    if (emailParts.Length == 2 &&
+        emailParts[0].Length > 2)
+    {
+        maskedEmail =
+            $"{emailParts[0][..2]}***@{emailParts[1]}";
+    }
 }
 
 <section class="mm-investor-auth-page">
@@ -22,11 +33,11 @@
                         <div class="mm-investor-auth-header">
 
                             <div class="mm-investor-auth-icon">
-                                <i class="bi bi-phone-fill"></i>
+                                <i class="bi bi-envelope-fill"></i>
                             </div>
 
                             <span class="mm-investor-auth-kicker">
-                                Mobile Verification
+                                Email Verification
                             </span>
 
                             <h1 class="mm-investor-auth-title">
@@ -34,9 +45,9 @@
                             </h1>
 
                             <p class="mm-investor-auth-copy">
-                                A six-digit verification OTP was generated for
+                                A six-digit verification OTP was sent to
                                 <strong class="text-white">
-                                    +91 @maskedPhone
+                                    @maskedEmail
                                 </strong>
                             </p>
 
@@ -50,10 +61,10 @@
 
                             @Html.AntiForgeryToken()
 
-                            <input asp-for="InvestorOtpChallengeID"
+                            <input asp-for="InvestorEmailOtpChallengeID"
                                    type="hidden" />
 
-                            <input asp-for="PhoneNumber"
+                            <input asp-for="EmailAddress"
                                    type="hidden" />
 
                             <div asp-validation-summary="ModelOnly"
@@ -89,7 +100,7 @@
                                     class="btn mm-investor-auth-primary w-100">
 
                                 <i class="bi bi-shield-check me-2"></i>
-                                Verify Mobile Number
+                                Verify Email Address
 
                             </button>
 

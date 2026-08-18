@@ -20,17 +20,32 @@ namespace MoneyMiners.Controllers
         private const string PhoneNumberTempDataKey =
             "InvestorRegistrationPhoneNumber";
 
+        private const string EmailOtpChallengeTempDataKey =
+            "InvestorRegistrationEmailOtpChallengeID";
+
+        private const string EmailAddressTempDataKey =
+            "InvestorRegistrationEmailAddress";
+
         private const string PasswordResetOtpChallengeTempDataKey =
             "InvestorPasswordResetOtpChallengeID";
 
         private const string PasswordResetPhoneNumberTempDataKey =
             "InvestorPasswordResetPhoneNumber";
 
+        private const string PasswordResetEmailOtpChallengeTempDataKey =
+            "InvestorPasswordResetEmailOtpChallengeID";
+
+        private const string PasswordResetEmailAddressTempDataKey =
+            "InvestorPasswordResetEmailAddress";
+
         private readonly IInvestorAccountRepository
             _investorAccountRepository;
 
         private readonly IInvestorOtpService
             _investorOtpService;
+
+        private readonly IInvestorEmailOtpService
+           _investorEmailOtpService;
 
         private readonly ISensitiveDataProtector
             _sensitiveDataProtector;
@@ -42,17 +57,21 @@ namespace MoneyMiners.Controllers
             _logger;
 
         public InvestorAccountController(
-            IInvestorAccountRepository investorAccountRepository,
-            IInvestorOtpService investorOtpService,
-            ISensitiveDataProtector sensitiveDataProtector,
-            IPasswordHasher<InvestorAccount> passwordHasher,
-            ILogger<InvestorAccountController> logger)
+        IInvestorAccountRepository investorAccountRepository,
+        IInvestorOtpService investorOtpService,
+        IInvestorEmailOtpService investorEmailOtpService,
+        ISensitiveDataProtector sensitiveDataProtector,
+        IPasswordHasher<InvestorAccount> passwordHasher,
+        ILogger<InvestorAccountController> logger)
         {
             _investorAccountRepository =
                 investorAccountRepository;
 
             _investorOtpService =
                 investorOtpService;
+
+            _investorEmailOtpService =
+                investorEmailOtpService;
 
             _sensitiveDataProtector =
                 sensitiveDataProtector;
@@ -104,7 +123,7 @@ namespace MoneyMiners.Controllers
                 {
                     ModelState.AddModelError(
                         string.Empty,
-                        "Invalid Investor ID, mobile number or password.");
+                        "Invalid Investor ID, email address or password.");
 
                     return View(model);
                 }
@@ -118,11 +137,11 @@ namespace MoneyMiners.Controllers
                     return View(model);
                 }
 
-                if (!account.IsMobileVerified)
+                if (!account.IsEmailVerified)
                 {
                     ModelState.AddModelError(
                         string.Empty,
-                        "Your mobile number has not been verified.");
+                        "Your email address has not been verified.");
 
                     return View(model);
                 }
@@ -175,7 +194,7 @@ namespace MoneyMiners.Controllers
 
                         ModelState.AddModelError(
                             string.Empty,
-                            $"Invalid Investor ID, mobile number or password. {remainingAttempts} attempt(s) remaining.");
+                            $"Invalid Investor ID, email address or password. {{remainingAttempts}} attempt(s) remaining.");
                     }
 
                     return View(model);
@@ -212,6 +231,11 @@ namespace MoneyMiners.Controllers
                 new(
                     "PhoneNumber",
                     account.PhoneNumber),
+
+
+                new(
+                     ClaimTypes.Email,
+                     account.Email ?? string.Empty),
 
                 new(
                     "SecurityStamp",
@@ -291,8 +315,8 @@ namespace MoneyMiners.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(
-         InvestorForgotPasswordViewModel model,
-         CancellationToken cancellationToken)
+     InvestorForgotPasswordViewModel model,
+     CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -301,51 +325,76 @@ namespace MoneyMiners.Controllers
 
             try
             {
-                var phoneNumber =
-                    NormalizeDigits(model.PhoneNumber);
+                var emailAddress =
+                    model.Email
+                        .Trim()
+                        .ToLowerInvariant();
 
                 var account =
                     await _investorAccountRepository.GetByLoginAsync(
-                        phoneNumber,
+                        emailAddress,
                         cancellationToken);
 
-                if (account is null || !account.IsActive)
+                if (account is null ||
+                    !account.IsActive)
                 {
                     ModelState.AddModelError(
-                        nameof(model.PhoneNumber),
-                        "No active investor account was found with this mobile number.");
+                        nameof(model.Email),
+                        "No active investor account was found with this email address.");
+
+                    return View(model);
+                }
+
+                if (!account.IsEmailVerified)
+                {
+                    ModelState.AddModelError(
+                        nameof(model.Email),
+                        "This email address has not been verified.");
 
                     return View(model);
                 }
 
                 var challenge =
-                    await _investorOtpService.SendAsync(
-                        phoneNumber,
+                    await _investorEmailOtpService.SendAsync(
+                        emailAddress,
                         InvestorOtpPurpose.PasswordReset,
                         cancellationToken);
 
-                TempData[PasswordResetOtpChallengeTempDataKey] =
-                    challenge.InvestorOtpChallengeID.ToString();
+                TempData[PasswordResetEmailOtpChallengeTempDataKey] =
+                    challenge.InvestorEmailOtpChallengeID.ToString();
 
-                TempData[PasswordResetPhoneNumberTempDataKey] =
-                    challenge.PhoneNumber;
+                TempData[PasswordResetEmailAddressTempDataKey] =
+                    challenge.EmailAddress;
 
                 return RedirectToAction(
-                    "VerifyForgotPasswordOtp");
+                    nameof(VerifyForgotPasswordOtp));
             }
             catch (SqlException exception)
-                when (exception.Number is 52010 or 52011)
+                when (exception.Number is 52210 or 52211)
             {
+                var errorMessage =
+                    exception.Number switch
+                    {
+                        52210 =>
+                            "Please wait 60 seconds before requesting another OTP.",
+
+                        52211 =>
+                            "Too many OTP requests. Please try again after one hour.",
+
+                        _ =>
+                            "OTP could not be sent."
+                    };
+
                 ModelState.AddModelError(
                     string.Empty,
-                    GetOtpRequestErrorMessage(exception));
+                    errorMessage);
 
                 return View(model);
             }
             catch (ArgumentException exception)
             {
                 ModelState.AddModelError(
-                    nameof(model.PhoneNumber),
+                    nameof(model.Email),
                     exception.Message);
 
                 return View(model);
@@ -354,11 +403,11 @@ namespace MoneyMiners.Controllers
             {
                 _logger.LogError(
                     exception,
-                    "Investor password reset OTP request failed.");
+                    "Investor password reset email OTP request failed.");
 
                 ModelState.AddModelError(
                     string.Empty,
-                    "OTP could not be sent. Please try again.");
+                    "OTP could not be sent to your email. Please try again.");
 
                 return View(model);
             }
@@ -367,9 +416,29 @@ namespace MoneyMiners.Controllers
         [HttpGet]
         public IActionResult VerifyForgotPasswordOtp()
         {
-            if (!TryReadPasswordResetTempData(
-                    out var challengeId,
-                    out var phoneNumber))
+            var challengeValue =
+                TempData[PasswordResetEmailOtpChallengeTempDataKey];
+
+            var emailValue =
+                TempData[PasswordResetEmailAddressTempDataKey];
+
+            if (challengeValue is null ||
+                emailValue is null ||
+                !long.TryParse(
+                    challengeValue.ToString(),
+                    out var challengeId) ||
+                challengeId <= 0)
+            {
+                return RedirectToAction(
+                    nameof(ForgotPassword));
+            }
+
+            var emailAddress =
+                emailValue.ToString()
+                ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(
+                    emailAddress))
             {
                 return RedirectToAction(
                     nameof(ForgotPassword));
@@ -378,19 +447,20 @@ namespace MoneyMiners.Controllers
             return View(
                 new InvestorForgotPasswordOtpViewModel
                 {
-                    InvestorOtpChallengeID =
+                    InvestorEmailOtpChallengeID =
                         challengeId,
 
-                    PhoneNumber =
-                        phoneNumber
+                    EmailAddress =
+                        emailAddress
                 });
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> VerifyForgotPasswordOtp(
-        InvestorForgotPasswordOtpViewModel model,
-        CancellationToken cancellationToken)
+            InvestorForgotPasswordOtpViewModel model,
+            CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -400,9 +470,9 @@ namespace MoneyMiners.Controllers
             try
             {
                 var result =
-                    await _investorOtpService.VerifyAsync(
-                        model.InvestorOtpChallengeID,
-                        model.PhoneNumber,
+                    await _investorEmailOtpService.VerifyAsync(
+                        model.InvestorEmailOtpChallengeID,
+                        model.EmailAddress,
                         InvestorOtpPurpose.PasswordReset,
                         model.OtpCode,
                         cancellationToken);
@@ -416,26 +486,48 @@ namespace MoneyMiners.Controllers
                     return View(model);
                 }
 
-                TempData[PasswordResetOtpChallengeTempDataKey] =
-                    result.InvestorOtpChallengeID.ToString();
+                TempData[PasswordResetEmailOtpChallengeTempDataKey] =
+                    result.InvestorEmailOtpChallengeID.ToString();
 
-                TempData[PasswordResetPhoneNumberTempDataKey] =
-                    result.PhoneNumber;
+                TempData[PasswordResetEmailAddressTempDataKey] =
+                    result.EmailAddress;
 
                 return RedirectToAction(
-                    "ResetPassword");
+                    nameof(ResetPassword));
             }
             catch (SqlException exception)
                 when (exception.Number is
-                    52110 or
-                    52111 or
-                    52112 or
-                    52113 or
-                    52114)
+                    52310 or
+                    52311 or
+                    52312 or
+                    52313 or
+                    52314)
             {
+                var errorMessage =
+                    exception.Number switch
+                    {
+                        52310 =>
+                            "Invalid OTP verification request.",
+
+                        52311 =>
+                            "This OTP has already been used.",
+
+                        52312 =>
+                            "OTP has expired. Please request a new OTP.",
+
+                        52313 =>
+                            "Maximum OTP attempts exceeded. Request a new OTP.",
+
+                        52314 =>
+                            "The entered OTP is incorrect.",
+
+                        _ =>
+                            "OTP verification failed."
+                    };
+
                 ModelState.AddModelError(
                     nameof(model.OtpCode),
-                    GetOtpVerificationErrorMessage(exception));
+                    errorMessage);
 
                 return View(model);
             }
@@ -451,7 +543,7 @@ namespace MoneyMiners.Controllers
             {
                 _logger.LogError(
                     exception,
-                    "Investor password reset OTP verification failed.");
+                    "Investor password reset email OTP verification failed.");
 
                 ModelState.AddModelError(
                     string.Empty,
@@ -460,13 +552,32 @@ namespace MoneyMiners.Controllers
                 return View(model);
             }
         }
-
         [HttpGet]
         public IActionResult ResetPassword()
         {
-            if (!TryReadPasswordResetTempData(
-                    out var challengeId,
-                    out var phoneNumber))
+            var challengeValue =
+                TempData[PasswordResetEmailOtpChallengeTempDataKey];
+
+            var emailValue =
+                TempData[PasswordResetEmailAddressTempDataKey];
+
+            if (challengeValue is null ||
+                emailValue is null ||
+                !long.TryParse(
+                    challengeValue.ToString(),
+                    out var challengeId) ||
+                challengeId <= 0)
+            {
+                return RedirectToAction(
+                    nameof(ForgotPassword));
+            }
+
+            var emailAddress =
+                emailValue.ToString()
+                ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(
+                    emailAddress))
             {
                 return RedirectToAction(
                     nameof(ForgotPassword));
@@ -475,19 +586,22 @@ namespace MoneyMiners.Controllers
             return View(
                 new InvestorResetPasswordViewModel
                 {
-                    InvestorOtpChallengeID =
+                    InvestorEmailOtpChallengeID =
                         challengeId,
 
-                    PhoneNumber =
-                        phoneNumber
+                    EmailAddress =
+                        emailAddress
+                            .Trim()
+                            .ToLowerInvariant()
                 });
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(
-        InvestorResetPasswordViewModel model,
-        CancellationToken cancellationToken)
+            InvestorResetPasswordViewModel model,
+            CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -496,19 +610,31 @@ namespace MoneyMiners.Controllers
 
             try
             {
-                var phoneNumber =
-                    NormalizeDigits(model.PhoneNumber);
+                var emailAddress =
+                    model.EmailAddress
+                        .Trim()
+                        .ToLowerInvariant();
 
                 var account =
                     await _investorAccountRepository.GetByLoginAsync(
-                        phoneNumber,
+                        emailAddress,
                         cancellationToken);
 
-                if (account is null || !account.IsActive)
+                if (account is null ||
+                    !account.IsActive)
                 {
                     ModelState.AddModelError(
                         string.Empty,
                         "Investor account was not found.");
+
+                    return View(model);
+                }
+
+                if (!account.IsEmailVerified)
+                {
+                    ModelState.AddModelError(
+                        string.Empty,
+                        "Email address has not been verified.");
 
                     return View(model);
                 }
@@ -521,11 +647,19 @@ namespace MoneyMiners.Controllers
                 await _investorAccountRepository.ResetPasswordAsync(
                     new InvestorPasswordResetCommand
                     {
+                        // Current Email OTP flow
+                        InvestorEmailOtpChallengeID =
+                            model.InvestorEmailOtpChallengeID,
+
+                        EmailAddress =
+                            emailAddress,
+
+                        // Future Mobile OTP flow
                         InvestorOtpChallengeID =
-                            model.InvestorOtpChallengeID,
+                            null,
 
                         PhoneNumber =
-                            phoneNumber,
+                            null,
 
                         PasswordHash =
                             passwordHash
@@ -553,16 +687,16 @@ namespace MoneyMiners.Controllers
                     exception.Number switch
                     {
                         53210 =>
-                            "Invalid password reset request.",
+                            "Invalid password reset verification request.",
 
                         53211 =>
                             "This OTP has already been used.",
 
                         53212 =>
-                            "Mobile number has not been verified.",
+                            "Email OTP has not been verified.",
 
                         53213 =>
-                            "OTP verification has expired.",
+                            "OTP verification has expired. Please request a new OTP.",
 
                         53214 =>
                             "Investor account was not found.",
@@ -589,7 +723,7 @@ namespace MoneyMiners.Controllers
             {
                 _logger.LogError(
                     exception,
-                    "Investor password reset failed.");
+                    "Investor email password reset failed.");
 
                 ModelState.AddModelError(
                     string.Empty,
@@ -612,8 +746,8 @@ namespace MoneyMiners.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateAccount(
-            InvestorOtpRequestViewModel model,
-            CancellationToken cancellationToken)
+        InvestorOtpRequestViewModel model,
+        CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -623,33 +757,46 @@ namespace MoneyMiners.Controllers
             try
             {
                 var challenge =
-                    await _investorOtpService.SendAsync(
-                        model.PhoneNumber,
+                    await _investorEmailOtpService.SendAsync(
+                        model.Email,
                         InvestorOtpPurpose.Registration,
                         cancellationToken);
 
-                TempData[OtpChallengeTempDataKey] =
-                    challenge.InvestorOtpChallengeID.ToString();
+                TempData[EmailOtpChallengeTempDataKey] =
+                    challenge.InvestorEmailOtpChallengeID.ToString();
 
-                TempData[PhoneNumberTempDataKey] =
-                    challenge.PhoneNumber;
+                TempData[EmailAddressTempDataKey] =
+                    challenge.EmailAddress;
 
                 return RedirectToAction(
                     nameof(VerifyRegistrationOtp));
             }
             catch (SqlException exception)
-                when (exception.Number is 52010 or 52011)
+                when (exception.Number is 52210 or 52211)
             {
+                var errorMessage =
+                    exception.Number switch
+                    {
+                        52210 =>
+                            "Please wait 60 seconds before requesting another OTP.",
+
+                        52211 =>
+                            "Too many OTP requests. Please try again after one hour.",
+
+                        _ =>
+                            "OTP could not be sent."
+                    };
+
                 ModelState.AddModelError(
                     string.Empty,
-                    GetOtpRequestErrorMessage(exception));
+                    errorMessage);
 
                 return View(model);
             }
             catch (ArgumentException exception)
             {
                 ModelState.AddModelError(
-                    nameof(model.PhoneNumber),
+                    nameof(model.Email),
                     exception.Message);
 
                 return View(model);
@@ -658,44 +805,64 @@ namespace MoneyMiners.Controllers
             {
                 _logger.LogError(
                     exception,
-                    "Investor registration OTP request failed.");
+                    "Investor registration email OTP request failed.");
 
                 ModelState.AddModelError(
                     string.Empty,
-                    "OTP could not be sent. Please try again.");
+                    "OTP could not be sent to your email. Please try again.");
 
                 return View(model);
             }
         }
 
-        // Step 2: Mobile OTP verify karega.
+        // Step 2: Email OTP verify karega.
         [HttpGet]
         public IActionResult VerifyRegistrationOtp()
         {
-            if (!TryReadRegistrationTempData(
-                    out var challengeId,
-                    out var phoneNumber))
+            var challengeValue =
+                TempData[EmailOtpChallengeTempDataKey];
+
+            var emailValue =
+                TempData[EmailAddressTempDataKey];
+
+            if (challengeValue is null ||
+                emailValue is null ||
+                !long.TryParse(
+                    challengeValue.ToString(),
+                    out var challengeId) ||
+                challengeId <= 0)
+            {
+                return RedirectToAction(
+                    nameof(CreateAccount));
+            }
+
+            var emailAddress =
+                emailValue.ToString()
+                ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(
+                    emailAddress))
             {
                 return RedirectToAction(
                     nameof(CreateAccount));
             }
 
             return View(
-                new InvestorOtpVerifyViewModel
+                new InvestorEmailOtpVerifyViewModel
                 {
-                    InvestorOtpChallengeID =
+                    InvestorEmailOtpChallengeID =
                         challengeId,
 
-                    PhoneNumber =
-                        phoneNumber
+                    EmailAddress =
+                        emailAddress
                 });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> VerifyRegistrationOtp(
-            InvestorOtpVerifyViewModel model,
-            CancellationToken cancellationToken)
+        InvestorEmailOtpVerifyViewModel model,
+        CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -705,9 +872,9 @@ namespace MoneyMiners.Controllers
             try
             {
                 var result =
-                    await _investorOtpService.VerifyAsync(
-                        model.InvestorOtpChallengeID,
-                        model.PhoneNumber,
+                    await _investorEmailOtpService.VerifyAsync(
+                        model.InvestorEmailOtpChallengeID,
+                        model.EmailAddress,
                         InvestorOtpPurpose.Registration,
                         model.OtpCode,
                         cancellationToken);
@@ -721,27 +888,48 @@ namespace MoneyMiners.Controllers
                     return View(model);
                 }
 
-                TempData[OtpChallengeTempDataKey] =
-                    result.InvestorOtpChallengeID.ToString();
+                TempData[EmailOtpChallengeTempDataKey] =
+                    result.InvestorEmailOtpChallengeID.ToString();
 
-                TempData[PhoneNumberTempDataKey] =
-                    result.PhoneNumber;
+                TempData[EmailAddressTempDataKey] =
+                    result.EmailAddress;
 
                 return RedirectToAction(
                     nameof(CompleteRegistration));
             }
             catch (SqlException exception)
                 when (exception.Number is
-                    52110 or
-                    52111 or
-                    52112 or
-                    52113 or
-                    52114)
+                    52310 or
+                    52311 or
+                    52312 or
+                    52313 or
+                    52314)
             {
+                var errorMessage =
+                    exception.Number switch
+                    {
+                        52310 =>
+                            "Invalid OTP verification request.",
+
+                        52311 =>
+                            "This OTP has already been used.",
+
+                        52312 =>
+                            "OTP has expired. Please request a new OTP.",
+
+                        52313 =>
+                            "Maximum OTP attempts exceeded. Request a new OTP.",
+
+                        52314 =>
+                            "The entered OTP is incorrect.",
+
+                        _ =>
+                            "OTP verification failed."
+                    };
+
                 ModelState.AddModelError(
                     nameof(model.OtpCode),
-                    GetOtpVerificationErrorMessage(
-                        exception));
+                    errorMessage);
 
                 return View(model);
             }
@@ -757,7 +945,7 @@ namespace MoneyMiners.Controllers
             {
                 _logger.LogError(
                     exception,
-                    "Investor registration OTP verification failed.");
+                    "Investor registration email OTP verification failed.");
 
                 ModelState.AddModelError(
                     string.Empty,
@@ -767,13 +955,33 @@ namespace MoneyMiners.Controllers
             }
         }
 
-        // Step 3: Verified mobile ke baad complete profile form.
+        // Step 3: Verified email ke baad complete profile form.
         [HttpGet]
         public IActionResult CompleteRegistration()
         {
-            if (!TryReadRegistrationTempData(
-                    out var challengeId,
-                    out var phoneNumber))
+            var challengeValue =
+                TempData[EmailOtpChallengeTempDataKey];
+
+            var emailValue =
+                TempData[EmailAddressTempDataKey];
+
+            if (challengeValue is null ||
+                emailValue is null ||
+                !long.TryParse(
+                    challengeValue.ToString(),
+                    out var challengeId) ||
+                challengeId <= 0)
+            {
+                return RedirectToAction(
+                    nameof(CreateAccount));
+            }
+
+            var emailAddress =
+                emailValue.ToString()
+                ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(
+                    emailAddress))
             {
                 return RedirectToAction(
                     nameof(CreateAccount));
@@ -782,11 +990,11 @@ namespace MoneyMiners.Controllers
             return View(
                 new InvestorRegisterViewModel
                 {
-                    InvestorOtpChallengeID =
+                    InvestorEmailOtpChallengeID =
                         challengeId,
 
-                    PhoneNumber =
-                        phoneNumber,
+                    Email =
+                        emailAddress.Trim().ToLowerInvariant(),
 
                     Country =
                         "India"
@@ -817,6 +1025,11 @@ namespace MoneyMiners.Controllers
                     NormalizeDigits(
                         model.PhoneNumber);
 
+                var emailAddress =
+                    model.Email
+                        .Trim()
+                        .ToLowerInvariant();
+
                 var aadhaarNumber =
                     NormalizeDigits(
                         model.AadhaarNumber);
@@ -824,6 +1037,7 @@ namespace MoneyMiners.Controllers
                 var panNumber =
                     NormalizePan(
                         model.PANNumber);
+
 
                 var accountForPasswordHash =
                     new InvestorAccount
@@ -842,16 +1056,23 @@ namespace MoneyMiners.Controllers
                                 model.LastName)
                     };
 
+
                 var passwordHash =
                     _passwordHasher.HashPassword(
                         accountForPasswordHash,
                         model.Password);
 
+
                 var registrationCommand =
                     new InvestorRegistrationCommand
                     {
+                        // Current Email OTP flow
+                        InvestorEmailOtpChallengeID =
+                            model.InvestorEmailOtpChallengeID,
+
+                        // Future Mobile OTP flow
                         InvestorOtpChallengeID =
-                            model.InvestorOtpChallengeID,
+                            null,
 
                         FirstName =
                             model.FirstName.Trim(),
@@ -868,8 +1089,7 @@ namespace MoneyMiners.Controllers
                             phoneNumber,
 
                         Email =
-                            NormalizeOptionalText(
-                                model.Email),
+                            emailAddress,
 
                         AddressLine1 =
                             NormalizeOptionalText(
@@ -929,22 +1149,66 @@ namespace MoneyMiners.Controllers
                             passwordHash
                     };
 
+
                 var registrationResult =
                     await _investorAccountRepository.RegisterAsync(
                         registrationCommand,
                         cancellationToken);
+
 
                 return View(
                     "RegistrationSuccess",
                     registrationResult);
             }
             catch (SqlException exception)
-                when (exception.Number is >= 51010 and <= 51017)
+                when (exception.Number is >= 51010 and <= 51021)
             {
+                var errorMessage =
+                    exception.Number switch
+                    {
+                        51010 =>
+                            "An account already exists with this mobile number.",
+
+                        51011 =>
+                            "An account already exists with this email address.",
+
+                        51012 =>
+                            "An account already exists with this Aadhaar number.",
+
+                        51013 =>
+                            "An account already exists with this PAN number.",
+
+                        51014 =>
+                            "Invalid mobile OTP verification request.",
+
+                        51015 =>
+                            "This mobile OTP has already been used.",
+
+                        51016 =>
+                            "Mobile number has not been verified.",
+
+                        51017 =>
+                            "Mobile OTP verification has expired.",
+
+                        51018 =>
+                            "Invalid email OTP verification request.",
+
+                        51019 =>
+                            "This email OTP has already been used.",
+
+                        51020 =>
+                            "Email address has not been verified.",
+
+                        51021 =>
+                            "Email OTP verification has expired.",
+
+                        _ =>
+                            "Account registration failed."
+                    };
+
                 ModelState.AddModelError(
                     string.Empty,
-                    GetRegistrationErrorMessage(
-                        exception));
+                    errorMessage);
 
                 return View(model);
             }

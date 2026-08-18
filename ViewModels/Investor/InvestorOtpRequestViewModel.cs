@@ -4,11 +4,13 @@ namespace MoneyMiners.ViewModels.Investor
 {
     public sealed class InvestorOtpRequestViewModel
     {
-        [Required(ErrorMessage = "Mobile number is required.")]
-        [RegularExpression(
-            @"^[0-9]{10}$",
-            ErrorMessage = "Enter a valid 10-digit mobile number.")]
+        [Required(ErrorMessage = "Email address is required.")]
+        [EmailAddress(ErrorMessage = "Enter a valid email address.")]
+        [Display(Name = "Email Address")]
+        public string Email { get; set; } = string.Empty;
+
+        // Future SMS OTP ke liye rakha hai.
         [Display(Name = "Mobile Number")]
-        public string PhoneNumber { get; set; } = string.Empty;
+        public string? PhoneNumber { get; set; }
     }
 }

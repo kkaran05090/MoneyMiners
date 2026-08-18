@@ -30,7 +30,7 @@
 
                             <p class="mm-investor-auth-copy">
                                 Sign in using your Investor ID
-                                or registered mobile number.
+                                or registered email address.
                             </p>
 
                         </div>
@@ -42,7 +42,6 @@
                                 @successMessage
                             </div>
                         }
-
 
                         <form asp-controller="InvestorAccount"
                               asp-action="Login"
@@ -75,7 +74,7 @@
                                     <input asp-for="LoginIdentifier"
                                            class="form-control"
                                            autocomplete="username"
-                                           placeholder="Investor ID or mobile number" />
+                                           placeholder="Investor ID or email address" />
 
                                 </div>
 

@@ -26,6 +26,8 @@
 
         public bool IsMobileVerified { get; set; }
 
+        public bool IsEmailVerified { get; set; }
+
         public string DisplayName =>
             string.IsNullOrWhiteSpace(LastName)
                 ? FirstName

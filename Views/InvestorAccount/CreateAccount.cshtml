@@ -29,7 +29,7 @@
                             </h1>
 
                             <p class="mm-investor-auth-copy">
-                                Enter your mobile number to begin
+                                Enter your email address to begin
                                 secure investor registration.
                             </p>
 
@@ -50,32 +50,32 @@
 
                             <div class="mb-4">
 
-                                <label asp-for="PhoneNumber"
+                                <label asp-for="Email"
                                        class="form-label">
                                 </label>
 
                                 <div class="input-group input-group-lg">
 
                                     <span class="input-group-text">
-                                        +91
+                                        <i class="bi bi-envelope-fill"></i>
                                     </span>
 
-                                    <input asp-for="PhoneNumber"
+                                    <input asp-for="Email"
                                            class="form-control"
-                                           inputmode="numeric"
-                                           autocomplete="tel"
-                                           maxlength="10"
-                                           placeholder="Enter 10-digit mobile number" />
+                                           type="email"
+                                           autocomplete="email"
+                                           placeholder="Enter your email address" />
 
                                 </div>
 
-                                <span asp-validation-for="PhoneNumber"
+                                <span asp-validation-for="Email"
                                       class="text-danger small">
                                 </span>
 
                                 <div class="form-text mt-2">
                                     A six-digit verification OTP will be
-                                    generated and remain valid for five minutes.
+                                    sent to your email and remain valid
+                                    for five minutes.
                                 </div>
 
                             </div>
@@ -116,7 +116,7 @@
                             <i class="bi bi-lock-fill"></i>
 
                             <p>
-                                Your mobile number and personal information
+                                Your email address and personal information
                                 are protected and used only for account
                                 verification and investor services.
                             </p>

@@ -12,6 +12,10 @@
 
         public string Role { get; set; } = string.Empty;
 
+        public string? PhoneNumber { get; set; }
+
+        public bool IsMobileVerified { get; set; }
+
         public bool IsActive { get; set; }
 
         public int FailedLoginCount { get; set; }

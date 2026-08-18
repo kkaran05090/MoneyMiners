@@ -62,7 +62,7 @@ namespace MoneyMiners.Controllers
             }
 
             if (!investor.IsActive ||
-                !investor.IsMobileVerified)
+                !investor.IsEmailVerified)
             {
                 ViewData["InvestorSearchError"] =
                     "Investor account is not active or verified.";
@@ -141,6 +141,9 @@ namespace MoneyMiners.Controllers
                     IsMobileVerified =
                         investor.IsMobileVerified,
 
+                    IsEmailVerified =
+                    investor.IsEmailVerified,
+
                     Investments =
                         investments
                 };
@@ -212,8 +215,8 @@ namespace MoneyMiners.Controllers
                     "Investor verification failed.");
             }
             else if (
-                !investor.IsActive ||
-                !investor.IsMobileVerified)
+            !investor.IsActive ||
+            !investor.IsEmailVerified)
             {
                 ModelState.AddModelError(
                     string.Empty,
@@ -352,11 +355,11 @@ namespace MoneyMiners.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangeStatus(
-    long investmentId,
-    string investorCode,
-    string newStatus,
-    string? remarks,
-    CancellationToken cancellationToken)
+        long investmentId,
+        string investorCode,
+        string newStatus,
+        string? remarks,
+        CancellationToken cancellationToken)
         {
             if (investmentId <= 0 ||
                 string.IsNullOrWhiteSpace(investorCode))
@@ -502,6 +505,9 @@ namespace MoneyMiners.Controllers
 
                         53506 =>
                             "Invalid investor account.",
+
+                        53507 =>
+                            "A reason is required for closed or cancelled investments.",
 
                         _ =>
                             "Investment status could not be changed."

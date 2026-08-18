@@ -178,6 +178,11 @@ namespace MoneyMiners.Repositories
                                 reader.GetOrdinal(
                                     "IsMobileVerified")),
 
+                        IsEmailVerified =
+                            reader.GetBoolean(
+                                reader.GetOrdinal(
+                                    "IsEmailVerified")),
+                           
                         IsActive =
                             reader.GetBoolean(
                                 reader.GetOrdinal(

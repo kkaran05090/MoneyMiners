@@ -42,8 +42,8 @@ namespace MoneyMiners.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            AdminCreateViewModel model,
-            CancellationToken cancellationToken)
+        AdminCreateViewModel model,
+        CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -54,7 +54,9 @@ namespace MoneyMiners.Controllers
             {
                 Username = model.Username.Trim(),
                 Email = model.Email.Trim(),
+                PhoneNumber = model.PhoneNumber.Trim(),
                 Role = "Admin",
+                IsMobileVerified = false,
                 IsActive = true
             };
 
@@ -68,6 +70,7 @@ namespace MoneyMiners.Controllers
                 await _adminUserRepository.CreateAsync(
                     adminUser.Username,
                     adminUser.Email,
+                    adminUser.PhoneNumber,
                     passwordHash,
                     "Admin",
                     cancellationToken);
@@ -87,6 +90,15 @@ namespace MoneyMiners.Controllers
                 ModelState.AddModelError(
                     nameof(model.Email),
                     "This email address already exists.");
+
+                return View(model);
+            }
+            catch (SqlException exception)
+                when (exception.Number == 51027)
+            {
+                ModelState.AddModelError(
+                    nameof(model.PhoneNumber),
+                    "This mobile number already exists.");
 
                 return View(model);
             }

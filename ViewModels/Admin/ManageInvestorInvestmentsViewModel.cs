@@ -24,6 +24,8 @@ namespace MoneyMiners.ViewModels.Admin
 
         public bool IsMobileVerified { get; set; }
 
+        public bool IsEmailVerified { get; set; }
+
         public IReadOnlyList<AdminInvestorInvestmentItem>
             Investments
         { get; set; } =

@@ -2,10 +2,17 @@
 {
     public sealed class InvestorPasswordResetCommand
     {
-        public long InvestorOtpChallengeID { get; set; }
+        // Future Mobile OTP flow
+        public long? InvestorOtpChallengeID { get; set; }
 
-        public string PhoneNumber { get; set; } =
-            string.Empty;
+        public string? PhoneNumber { get; set; }
+
+
+        // Current Email OTP flow
+        public long? InvestorEmailOtpChallengeID { get; set; }
+
+        public string? EmailAddress { get; set; }
+
 
         public string PasswordHash { get; set; } =
             string.Empty;

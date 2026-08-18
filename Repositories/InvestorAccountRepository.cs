@@ -39,15 +39,24 @@ namespace MoneyMiners.Repositories
             command.Parameters.Add(
               "@InvestorOtpChallengeID",
               SqlDbType.BigInt).Value =
-              registration.InvestorOtpChallengeID;
-
-            AddRequiredString(
-                command,
-                "@FirstName",
-                SqlDbType.NVarChar,
-                60,
-                registration.FirstName);
-
+              registration.InvestorOtpChallengeID.HasValue
+                  ? registration.InvestorOtpChallengeID.Value
+                  : DBNull.Value;
+             
+                     command.Parameters.Add(
+                         "@InvestorEmailOtpChallengeID",
+                         SqlDbType.BigInt).Value =
+                         registration.InvestorEmailOtpChallengeID.HasValue
+                             ? registration.InvestorEmailOtpChallengeID.Value
+                             : DBNull.Value;
+             
+                     AddRequiredString(
+                         command,
+                         "@FirstName",
+                         SqlDbType.NVarChar,
+                         60,
+                         registration.FirstName);
+             
             AddNullableString(
                 command,
                 "@LastName",
@@ -229,7 +238,7 @@ namespace MoneyMiners.Repositories
             if (string.IsNullOrWhiteSpace(loginIdentifier))
             {
                 throw new ArgumentException(
-                    "Investor ID or mobile number is required.",
+                    "Investor ID or email address is required.",
                     nameof(loginIdentifier));
             }
 
@@ -247,7 +256,7 @@ namespace MoneyMiners.Repositories
             command.Parameters.Add(
                 "@LoginIdentifier",
                 SqlDbType.NVarChar,
-                100).Value =
+                256).Value =
                 loginIdentifier.Trim();
 
             await connection.OpenAsync(
@@ -298,6 +307,15 @@ namespace MoneyMiners.Repositories
                         reader.GetOrdinal(
                             "PhoneNumber")),
 
+                Email =
+                    reader.IsDBNull(
+                        reader.GetOrdinal(
+                                 "Email"))
+                        ? null
+                           : reader.GetString(
+                             reader.GetOrdinal(
+                                     "Email")),
+
                 FirstName =
                     reader.GetString(
                         reader.GetOrdinal(
@@ -317,6 +335,12 @@ namespace MoneyMiners.Repositories
                     reader.GetBoolean(
                         reader.GetOrdinal(
                             "IsMobileVerified")),
+
+
+                IsEmailVerified =
+                   reader.GetBoolean(
+                          reader.GetOrdinal(
+                               "IsEmailVerified")),
 
                 IsActive =
                     reader.GetBoolean(
@@ -443,7 +467,11 @@ namespace MoneyMiners.Repositories
 
                 IsMobileVerified =
                     reader.GetBoolean(
-                        reader.GetOrdinal("IsMobileVerified"))
+                        reader.GetOrdinal("IsMobileVerified")),
+
+                IsEmailVerified =
+                   reader.GetBoolean(
+                       reader.GetOrdinal("IsEmailVerified"))
             };
         }
 
@@ -530,25 +558,59 @@ namespace MoneyMiners.Repositories
 
 
         public async Task<InvestorPasswordResetResult> ResetPasswordAsync(
-    InvestorPasswordResetCommand resetCommand,
-    CancellationToken cancellationToken = default)
+        InvestorPasswordResetCommand resetCommand,
+        CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(
                 resetCommand);
 
-            if (resetCommand.InvestorOtpChallengeID <= 0)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(resetCommand.InvestorOtpChallengeID),
-                    "Invalid OTP challenge.");
-            }
+            var hasMobileOtp =
+                resetCommand.InvestorOtpChallengeID.HasValue;
 
-            if (string.IsNullOrWhiteSpace(
-                    resetCommand.PhoneNumber))
+            var hasEmailOtp =
+                resetCommand.InvestorEmailOtpChallengeID.HasValue;
+
+            if (hasMobileOtp == hasEmailOtp)
             {
                 throw new ArgumentException(
-                    "Mobile number is required.",
-                    nameof(resetCommand.PhoneNumber));
+                    "Exactly one OTP verification method is required.",
+                    nameof(resetCommand));
+            }
+
+            if (hasMobileOtp)
+            {
+                if (resetCommand.InvestorOtpChallengeID <= 0)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(resetCommand.InvestorOtpChallengeID),
+                        "Invalid mobile OTP challenge.");
+                }
+
+                if (string.IsNullOrWhiteSpace(
+                        resetCommand.PhoneNumber))
+                {
+                    throw new ArgumentException(
+                        "Mobile number is required.",
+                        nameof(resetCommand.PhoneNumber));
+                }
+            }
+
+            if (hasEmailOtp)
+            {
+                if (resetCommand.InvestorEmailOtpChallengeID <= 0)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(resetCommand.InvestorEmailOtpChallengeID),
+                        "Invalid email OTP challenge.");
+                }
+
+                if (string.IsNullOrWhiteSpace(
+                        resetCommand.EmailAddress))
+                {
+                    throw new ArgumentException(
+                        "Email address is required.",
+                        nameof(resetCommand.EmailAddress));
+                }
             }
 
             if (string.IsNullOrWhiteSpace(
@@ -570,17 +632,42 @@ namespace MoneyMiners.Repositories
             command.CommandType =
                 CommandType.StoredProcedure;
 
+
             command.Parameters.Add(
                 "@InvestorOtpChallengeID",
                 SqlDbType.BigInt).Value =
-                resetCommand.InvestorOtpChallengeID;
+                resetCommand.InvestorOtpChallengeID.HasValue
+                    ? resetCommand.InvestorOtpChallengeID.Value
+                    : DBNull.Value;
 
-            AddRequiredString(
-                command,
+
+            command.Parameters.Add(
+                "@InvestorEmailOtpChallengeID",
+                SqlDbType.BigInt).Value =
+                resetCommand.InvestorEmailOtpChallengeID.HasValue
+                    ? resetCommand.InvestorEmailOtpChallengeID.Value
+                    : DBNull.Value;
+
+
+            command.Parameters.Add(
                 "@PhoneNumber",
                 SqlDbType.VarChar,
-                15,
-                resetCommand.PhoneNumber);
+                15).Value =
+                string.IsNullOrWhiteSpace(
+                    resetCommand.PhoneNumber)
+                    ? DBNull.Value
+                    : resetCommand.PhoneNumber.Trim();
+
+
+            command.Parameters.Add(
+                "@EmailAddress",
+                SqlDbType.NVarChar,
+                256).Value =
+                string.IsNullOrWhiteSpace(
+                    resetCommand.EmailAddress)
+                    ? DBNull.Value
+                    : resetCommand.EmailAddress.Trim().ToLowerInvariant();
+
 
             AddRequiredString(
                 command,
@@ -588,6 +675,7 @@ namespace MoneyMiners.Repositories
                 SqlDbType.NVarChar,
                 500,
                 resetCommand.PasswordHash);
+
 
             await connection.OpenAsync(
                 cancellationToken);

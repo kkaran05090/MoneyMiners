@@ -35,6 +35,8 @@
 
         public bool IsMobileVerified { get; set; }
 
+        public bool IsEmailVerified { get; set; }
+
         public bool IsActive { get; set; }
 
         public int ActivePlansCount { get; set; }

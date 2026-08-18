@@ -4,10 +4,21 @@
     Layout = "_Layout";
     ViewData["Title"] = "Complete Investor Registration";
 
-    var maskedPhone =
-        Model.PhoneNumber.Length >= 4
-            ? $"******{Model.PhoneNumber[^4..]}"
-            : "****";
+    var emailAddress =
+     Model.Email ?? string.Empty;
+
+    var emailParts =
+        emailAddress.Split('@');
+
+    var maskedEmail =
+        emailAddress;
+
+    if (emailParts.Length == 2 &&
+        emailParts[0].Length > 2)
+    {
+        maskedEmail =
+            $"{emailParts[0][..2]}***@{emailParts[1]}";
+    }
 }
 
 <section class="mm-investor-auth-page">
@@ -34,12 +45,12 @@
                             </h1>
 
                             <p class="mm-investor-auth-copy mb-3">
-                                Your mobile number has been successfully verified.
+                                Your email address has been successfully verified.
                             </p>
 
                             <span class="mm-investor-auth-badge">
                                 <i class="bi bi-patch-check-fill me-1"></i>
-                                +91 @maskedPhone
+                                @maskedEmail
                             </span>
 
                         </div>
@@ -53,11 +64,11 @@
 
                             @Html.AntiForgeryToken()
 
-                            <input asp-for="InvestorOtpChallengeID"
+                            <input asp-for="InvestorEmailOtpChallengeID"
                                    type="hidden" />
 
-                            <input asp-for="PhoneNumber"
-                                   type="hidden" />
+                         @*    <input asp-for="Email"
+                                   type="hidden" /> *@
 
                             <div asp-validation-summary="ModelOnly"
                                  class="alert alert-danger"
@@ -127,8 +138,8 @@
                                     </div>
 
                                     <div class="col-md-6">
-                                        <label class="form-label fw-semibold">
-                                            Verified Mobile Number
+                                        <label asp-for="PhoneNumber"
+                                               class="form-label fw-semibold">
                                         </label>
 
                                         <div class="input-group">
@@ -136,31 +147,43 @@
                                                 +91
                                             </span>
 
-                                            <input value="@Model.PhoneNumber"
+                                            <input asp-for="PhoneNumber"
                                                    class="form-control"
-                                                   readonly />
+                                                   inputmode="numeric"
+                                                   autocomplete="tel"
+                                                   maxlength="10"
+                                                   placeholder="Enter 10-digit mobile number" />
                                         </div>
 
-                                        <div class="form-text text-success">
-                                            <i class="bi bi-patch-check-fill me-1"></i>
-                                            Mobile number verified
+                                        <span asp-validation-for="PhoneNumber"
+                                              class="text-danger small">
+                                        </span>
+
+                                        <div class="form-text">
+                                            This number will be used for future mobile OTP verification.
                                         </div>
                                     </div>
 
-                                    <div class="col-12">
+
+                                    <div class="col-md-6">
                                         <label asp-for="Email"
                                                class="form-label fw-semibold">
+                                            Verified Email Address
                                         </label>
 
                                         <input asp-for="Email"
                                                class="form-control"
                                                type="email"
-                                               autocomplete="email"
-                                               placeholder="name@example.com" />
+                                               readonly />
 
                                         <span asp-validation-for="Email"
                                               class="text-danger small">
                                         </span>
+
+                                        <div class="form-text text-success">
+                                            <i class="bi bi-patch-check-fill me-1"></i>
+                                            Email address verified
+                                        </div>
                                     </div>
 
                                 </div>

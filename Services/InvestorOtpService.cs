@@ -11,18 +11,20 @@ namespace MoneyMiners.Services
             TimeSpan.FromMinutes(5);
 
         private readonly IInvestorOtpRepository _otpRepository;
-        private readonly IInvestorSmsSender _smsSender;
+        private readonly ISmsSender _smsSender;
         private readonly ISensitiveDataProtector _dataProtector;
+
 
         public InvestorOtpService(
             IInvestorOtpRepository otpRepository,
-            IInvestorSmsSender smsSender,
+            ISmsSender smsSender,
             ISensitiveDataProtector dataProtector)
         {
             _otpRepository = otpRepository;
             _smsSender = smsSender;
             _dataProtector = dataProtector;
         }
+
 
         public async Task<InvestorOtpChallengeResult> SendAsync(
             string phoneNumber,
@@ -44,25 +46,29 @@ namespace MoneyMiners.Services
                     otpCode);
 
             var expiresAtUtc =
-                DateTime.UtcNow.Add(OtpValidity);
+                DateTime.UtcNow.Add(
+                    OtpValidity);
 
             var challenge =
-                await _otpRepository.CreateAsync(
-                    normalizedPhoneNumber,
-                    purpose,
-                    otpHash,
-                    expiresAtUtc,
-                    cancellationToken);
+                await _otpRepository
+                    .CreateAsync(
+                        normalizedPhoneNumber,
+                        purpose,
+                        otpHash,
+                        expiresAtUtc,
+                        cancellationToken);
 
-            await _smsSender.SendOtpAsync(
-                normalizedPhoneNumber,
-                otpCode,
-                purpose,
-                OtpValidity,
-                cancellationToken);
+            await _smsSender
+                .SendOtpAsync(
+                    normalizedPhoneNumber,
+                    otpCode,
+                    GetPurposeValue(purpose),
+                    OtpValidity,
+                    cancellationToken);
 
             return challenge;
         }
+
 
         public async Task<InvestorOtpVerificationResult> VerifyAsync(
             long investorOtpChallengeId,
@@ -79,10 +85,12 @@ namespace MoneyMiners.Services
             }
 
             var normalizedPhoneNumber =
-                NormalizePhoneNumber(phoneNumber);
+                NormalizePhoneNumber(
+                    phoneNumber);
 
             var normalizedOtpCode =
-                NormalizeOtpCode(otpCode);
+                NormalizeOtpCode(
+                    otpCode);
 
             var otpHash =
                 ComputeOtpHash(
@@ -90,30 +98,59 @@ namespace MoneyMiners.Services
                     purpose,
                     normalizedOtpCode);
 
-            return await _otpRepository.VerifyAsync(
-                investorOtpChallengeId,
-                normalizedPhoneNumber,
-                purpose,
-                otpHash,
-                cancellationToken);
+            return await _otpRepository
+                .VerifyAsync(
+                    investorOtpChallengeId,
+                    normalizedPhoneNumber,
+                    purpose,
+                    otpHash,
+                    cancellationToken);
         }
+
 
         private byte[] ComputeOtpHash(
             string phoneNumber,
             InvestorOtpPurpose purpose,
             string otpCode)
         {
-            var hashInput =
-                $"InvestorOTP|{purpose}|{phoneNumber}|{otpCode}";
+            var purposeValue =
+                GetPurposeValue(
+                    purpose);
 
-            return _dataProtector.ComputeHash(
-                hashInput);
+            var hashInput =
+                $"InvestorOTP|{purposeValue}|{phoneNumber}|{otpCode}";
+
+            return _dataProtector
+                .ComputeHash(
+                    hashInput);
         }
+
+
+        private static string GetPurposeValue(
+            InvestorOtpPurpose purpose)
+        {
+            return purpose switch
+            {
+                InvestorOtpPurpose.Registration =>
+                    "Registration",
+
+                InvestorOtpPurpose.PasswordReset =>
+                    "PasswordReset",
+
+                _ =>
+                    throw new ArgumentOutOfRangeException(
+                        nameof(purpose),
+                        purpose,
+                        "Unsupported OTP purpose.")
+            };
+        }
+
 
         private static string NormalizePhoneNumber(
             string phoneNumber)
         {
-            if (string.IsNullOrWhiteSpace(phoneNumber))
+            if (string.IsNullOrWhiteSpace(
+                    phoneNumber))
             {
                 throw new ArgumentException(
                     "Mobile number is required.",
@@ -136,10 +173,12 @@ namespace MoneyMiners.Services
             return normalized;
         }
 
+
         private static string NormalizeOtpCode(
             string otpCode)
         {
-            if (string.IsNullOrWhiteSpace(otpCode))
+            if (string.IsNullOrWhiteSpace(
+                    otpCode))
             {
                 throw new ArgumentException(
                     "OTP is required.",
@@ -150,8 +189,9 @@ namespace MoneyMiners.Services
                 otpCode.Trim();
 
             if (normalized.Length != 6 ||
-                normalized.Any(character =>
-                    !char.IsDigit(character)))
+                normalized.Any(
+                    character =>
+                        !char.IsDigit(character)))
             {
                 throw new ArgumentException(
                     "Enter a valid 6-digit OTP.",

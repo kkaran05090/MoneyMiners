@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace MoneyMiners.Services
 {
     public sealed class DevelopmentInvestorSmsSender
-        : IInvestorSmsSender
+    : ISmsSender
     {
         private readonly ILogger<DevelopmentInvestorSmsSender> _logger;
         private readonly IWebHostEnvironment _environment;
@@ -20,7 +20,7 @@ namespace MoneyMiners.Services
         public Task SendOtpAsync(
             string phoneNumber,
             string otpCode,
-            InvestorOtpPurpose purpose,
+            string purpose,
             TimeSpan validity,
             CancellationToken cancellationToken = default)
         {

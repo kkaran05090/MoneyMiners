@@ -10,6 +10,8 @@
 
         public string PhoneNumber { get; set; } = string.Empty;
 
+        public string? Email { get; set; }
+
         public string FirstName { get; set; } = string.Empty;
 
         public string? LastName { get; set; }
@@ -17,6 +19,8 @@
         public string PasswordHash { get; set; } = string.Empty;
 
         public bool IsMobileVerified { get; set; }
+
+        public bool IsEmailVerified { get; set; }
 
         public bool IsActive { get; set; }
 

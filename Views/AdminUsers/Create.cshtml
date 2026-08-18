@@ -54,6 +54,7 @@
                             </span>
                         </div>
 
+
                         <div class="col-md-6">
                             <label asp-for="Email"
                                    class="form-label">
@@ -68,6 +69,26 @@
                                   class="text-danger small">
                             </span>
                         </div>
+
+
+                        <div class="col-md-6">
+                            <label asp-for="PhoneNumber"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="PhoneNumber"
+                                   class="form-control"
+                                   type="tel"
+                                   inputmode="numeric"
+                                   maxlength="10"
+                                   autocomplete="tel"
+                                   placeholder="Enter 10-digit mobile number" />
+
+                            <span asp-validation-for="PhoneNumber"
+                                  class="text-danger small">
+                            </span>
+                        </div>
+
 
                         <div class="col-md-6">
                             <label asp-for="Password"
@@ -92,6 +113,7 @@
                                   class="text-danger small">
                             </span>
                         </div>
+
 
                         <div class="col-md-6">
                             <label asp-for="ConfirmPassword"
@@ -149,27 +171,31 @@
         document
             .querySelectorAll("[data-password-target]")
             .forEach(function(button) {
-                button.addEventListener("click", function() {
-                    const inputId =
-                        button.getAttribute(
-                            "data-password-target");
 
-                    const input =
-                        document.getElementById(inputId);
+                button.addEventListener(
+                    "click",
+                    function() {
 
-                    const passwordIsHidden =
-                        input.type === "password";
+                        const inputId =
+                            button.getAttribute(
+                                "data-password-target");
 
-                    input.type =
-                        passwordIsHidden
-                            ? "text"
-                            : "password";
+                        const input =
+                            document.getElementById(inputId);
 
-                    button.textContent =
-                        passwordIsHidden
-                            ? "Hide"
-                            : "Show";
-                });
+                        const passwordIsHidden =
+                            input.type === "password";
+
+                        input.type =
+                            passwordIsHidden
+                                ? "text"
+                                : "password";
+
+                        button.textContent =
+                            passwordIsHidden
+                                ? "Hide"
+                                : "Show";
+                    });
             });
     </script>
 }

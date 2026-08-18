@@ -4,11 +4,19 @@ namespace MoneyMiners.ViewModels.Investor
 {
     public sealed class InvestorForgotPasswordViewModel
     {
-        [Required(ErrorMessage = "Registered mobile number is required.")]
-        [RegularExpression(
-            @"^[0-9]{10}$",
-            ErrorMessage = "Enter a valid 10-digit mobile number.")]
+        // Current Email OTP flow
+        [Required(
+            ErrorMessage = "Registered email address is required.")]
+        [EmailAddress(
+            ErrorMessage = "Enter a valid email address.")]
+        [StringLength(256)]
+        [Display(Name = "Registered Email Address")]
+        public string Email { get; set; } =
+            string.Empty;
+
+
+        // Future Mobile OTP flow
         [Display(Name = "Registered Mobile Number")]
-        public string PhoneNumber { get; set; } = string.Empty;
+        public string? PhoneNumber { get; set; }
     }
 }

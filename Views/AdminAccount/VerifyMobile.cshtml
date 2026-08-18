@@ -1,0 +1,76 @@
+﻿@model MoneyMiners.ViewModels.Admin.AdminMobileVerificationViewModel
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Verify Mobile";
+}
+
+<section class="mm-admin-page">
+    <div class="container-fluid">
+
+        <div class="mm-admin-header">
+            <div>
+                <span class="mm-admin-label">
+                    ACCOUNT SECURITY
+                </span>
+
+                <h1>Verify Mobile Number</h1>
+
+                <p>
+                    Verify your registered mobile number
+                    to enable secure password recovery.
+                </p>
+            </div>
+        </div>
+
+
+        <div class="mm-admin-table-card">
+            <div class="p-4 p-md-5">
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Registered Mobile Number
+                    </label>
+
+                    <div class="form-control">
+                        @Model.MaskedPhoneNumber
+                    </div>
+
+                    <div class="form-text">
+                        A 6-digit OTP will be sent to
+                        this registered mobile number.
+                    </div>
+
+                </div>
+
+
+                <form asp-controller="AdminAccount"
+                      asp-action="SendMobileVerificationOtp"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+
+                    <div class="d-flex flex-wrap gap-3">
+
+                        <a asp-controller="Admin"
+                           asp-action="Dashboard"
+                           class="mm-admin-reset-button">
+                            ← Cancel
+                        </a>
+
+                        <button type="submit"
+                                class="mm-admin-filter-button">
+                            Send Verification OTP
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</section>
