@@ -83,14 +83,22 @@
 
                     <div class="mm-hero-actions">
 
-                        <a href="#" class="btn mm-hero-primary">
+                        <a asp-controller="InvestorAccount"
+                           asp-action="CreateAccount"
+                           class="btn mm-hero-primary">
+
                             Create Investor Account
                             <i class="bi bi-arrow-up-right"></i>
+
                         </a>
 
-                        <a href="#" class="btn mm-hero-secondary">
+                        <a asp-controller="InvestorAccount"
+                           asp-action="Login"
+                           class="btn mm-hero-secondary">
+
                             <i class="bi bi-person"></i>
                             Investor Login
+
                         </a>
 
                     </div>
@@ -439,23 +447,26 @@
                         <h3>Silver Plan</h3>
 
                         <div class="mm-plan-price">
-                            <strong>₹10,000</strong>
+                            <strong>₹5,00,000</strong>
                             <small>Minimum Investment</small>
                         </div>
 
                         <ul>
                             <li>
                                 <i class="bi bi-check-circle-fill"></i>
-                                12-month illustrative duration
+                                Monthly Return 6-8%
                             </li>
+
                             <li>
                                 <i class="bi bi-check-circle-fill"></i>
-                                Monthly portfolio report
+                                Tenure 8 Months
                             </li>
+
                             <li>
                                 <i class="bi bi-check-circle-fill"></i>
                                 Secure investor portal
                             </li>
+
                             <li>
                                 <i class="bi bi-check-circle-fill"></i>
                                 Email investor support
@@ -494,23 +505,26 @@
                         <h3>Gold Plan</h3>
 
                         <div class="mm-plan-price">
-                            <strong>₹50,000</strong>
+                            <strong>₹5,00,000</strong>
                             <small>Minimum Investment</small>
                         </div>
 
                         <ul>
                             <li>
                                 <i class="bi bi-check-circle-fill"></i>
-                                24-month illustrative duration
+                                40% Profit
                             </li>
+
                             <li>
                                 <i class="bi bi-check-circle-fill"></i>
-                                Detailed performance reports
+                                Tenure 4 Months
                             </li>
+
                             <li>
                                 <i class="bi bi-check-circle-fill"></i>
                                 Priority investor support
                             </li>
+
                             <li>
                                 <i class="bi bi-check-circle-fill"></i>
                                 Dedicated account assistance
@@ -545,23 +559,26 @@
                         <h3>Platinum Plan</h3>
 
                         <div class="mm-plan-price">
-                            <strong>₹1,00,000</strong>
+                            <strong>₹5,00,000</strong>
                             <small>Minimum Investment</small>
                         </div>
 
                         <ul>
                             <li>
                                 <i class="bi bi-check-circle-fill"></i>
-                                Flexible illustrative duration
+                                90-95% Profit
                             </li>
+
                             <li>
                                 <i class="bi bi-check-circle-fill"></i>
-                                Advanced portfolio insights
+                                Tenure 8 Months
                             </li>
+
                             <li>
                                 <i class="bi bi-check-circle-fill"></i>
                                 Premium investor support
                             </li>
+
                             <li>
                                 <i class="bi bi-check-circle-fill"></i>
                                 Relationship manager access
@@ -583,11 +600,11 @@
 
             </div>
 
-            <p class="mm-plan-disclaimer">
+           @*  <p class="mm-plan-disclaimer">
                 Plan values and durations shown here are illustrative placeholders.
                 Final terms must be reviewed and approved before publication.
                 Investments involve risk.
-            </p>
+            </p> *@
 
         </div>
 
