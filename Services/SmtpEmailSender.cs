@@ -1,20 +1,21 @@
-﻿using MailKit.Net.Smtp;
-using MailKit.Security;
-using Microsoft.Extensions.Options;
-using MimeKit;
+﻿using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 
 namespace MoneyMiners.Services
 {
     public sealed class SmtpEmailSender : IEmailSender
     {
-        private readonly EmailSettings _settings;
+        private static readonly HttpClient HttpClient = new();
+
+        private readonly IConfiguration _configuration;
         private readonly ILogger<SmtpEmailSender> _logger;
 
         public SmtpEmailSender(
-            IOptions<EmailSettings> options,
+            IConfiguration configuration,
             ILogger<SmtpEmailSender> logger)
         {
-            _settings = options.Value;
+            _configuration = configuration;
             _logger = logger;
         }
 
@@ -39,18 +40,25 @@ namespace MoneyMiners.Services
                     nameof(otpCode));
             }
 
-            var message = new MimeMessage();
+            var apiKey =
+                _configuration["Resend:ApiKey"];
 
-            message.From.Add(
-                new MailboxAddress(
-                    _settings.SenderName,
-                    _settings.SenderEmail));
+            var senderEmail =
+                _configuration["Resend:SenderEmail"];
 
-            message.To.Add(
-                MailboxAddress.Parse(
-                    emailAddress.Trim()));
+            if (string.IsNullOrWhiteSpace(apiKey))
+            {
+                throw new InvalidOperationException(
+                    "Resend API key is not configured.");
+            }
 
-            message.Subject =
+            if (string.IsNullOrWhiteSpace(senderEmail))
+            {
+                throw new InvalidOperationException(
+                    "Resend sender email is not configured.");
+            }
+
+            var subject =
                 purpose == "PasswordReset"
                     ? "Money Miners - Password Reset OTP"
                     : "Money Miners - Email Verification OTP";
@@ -61,73 +69,87 @@ namespace MoneyMiners.Services
                     (int)Math.Ceiling(
                         validity.TotalMinutes));
 
-            var bodyBuilder =
-                new BodyBuilder
-                {
-                    TextBody =
-                        $"Your Money Miners OTP is {otpCode}. " +
-                        $"It is valid for {validityMinutes} minute(s). " +
-                        "Do not share this OTP with anyone.",
+            var textBody =
+                $"Your Money Miners OTP is {otpCode}. " +
+                $"It is valid for {validityMinutes} minute(s). " +
+                "Do not share this OTP with anyone.";
 
-                    HtmlBody =
-                        $"""
-                        <div style="font-family:Arial,sans-serif;
-                                    max-width:600px;
-                                    margin:auto;
-                                    padding:24px;">
+            var htmlBody =
+                $"""
+                <div style="font-family:Arial,sans-serif;
+                            max-width:600px;
+                            margin:auto;
+                            padding:24px;">
 
-                            <h2>Money Miners</h2>
+                    <h2>Money Miners</h2>
 
-                            <p>Your verification OTP is:</p>
+                    <p>Your verification OTP is:</p>
 
-                            <h1 style="letter-spacing:6px;">
-                                {otpCode}
-                            </h1>
+                    <h1 style="letter-spacing:6px;">
+                        {otpCode}
+                    </h1>
 
-                            <p>
-                                This OTP is valid for
-                                {validityMinutes} minute(s).
-                            </p>
+                    <p>
+                        This OTP is valid for
+                        {validityMinutes} minute(s).
+                    </p>
 
-                            <p>
-                                Do not share this OTP with anyone.
-                            </p>
+                    <p>
+                        Do not share this OTP with anyone.
+                    </p>
 
-                        </div>
-                        """
-                };
+                </div>
+                """;
 
-            message.Body =
-                bodyBuilder.ToMessageBody();
+            var payload = new
+            {
+                from = $"Money Miners <{senderEmail}>",
+                to = new[] { emailAddress.Trim() },
+                subject,
+                text = textBody,
+                html = htmlBody
+            };
 
-            using var smtpClient =
-                new SmtpClient();
+            var json =
+                JsonSerializer.Serialize(payload);
+
+            using var request =
+                new HttpRequestMessage(
+                    HttpMethod.Post,
+                    "https://api.resend.com/emails");
+
+            request.Headers.Authorization =
+                new AuthenticationHeaderValue(
+                    "Bearer",
+                    apiKey);
+
+            request.Content =
+                new StringContent(
+                    json,
+                    Encoding.UTF8,
+                    "application/json");
 
             try
             {
-                var securityOption =
-                    _settings.EnableSsl
-                        ? SecureSocketOptions.StartTls
-                        : SecureSocketOptions.None;
+                using var response =
+                    await HttpClient.SendAsync(
+                        request,
+                        cancellationToken);
 
-                await smtpClient.ConnectAsync(
-                    _settings.SmtpHost,
-                    _settings.SmtpPort,
-                    securityOption,
-                    cancellationToken);
+                var responseBody =
+                    await response.Content.ReadAsStringAsync(
+                        cancellationToken);
 
-                await smtpClient.AuthenticateAsync(
-                    _settings.Username,
-                    _settings.Password,
-                    cancellationToken);
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError(
+                        "Resend email delivery failed. Status: {StatusCode}. Response: {Response}",
+                        response.StatusCode,
+                        responseBody);
 
-                await smtpClient.SendAsync(
-                    message,
-                    cancellationToken);
-
-                await smtpClient.DisconnectAsync(
-                    true,
-                    cancellationToken);
+                    throw new InvalidOperationException(
+                        "OTP email could not be sent.");
+                }
             }
             catch (Exception exception)
             {
