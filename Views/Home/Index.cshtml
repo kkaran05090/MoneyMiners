@@ -2,7 +2,10 @@
 @using Microsoft.AspNetCore.Authentication
 @inject IConfiguration Configuration
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Investor Portal";
+    ViewData["SeoTitle"] = "Money Miners Investor Portal";
+    ViewData["MetaDescription"] =
+        "Money Miners Investor Portal for secure investor account access, investment plan information, transparent reporting and investor support.";
 
     var whatsappNumber =
         Configuration["WhatsApp:BusinessNumber"];

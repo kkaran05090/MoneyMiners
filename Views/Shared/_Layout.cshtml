@@ -23,8 +23,11 @@
     <meta name="google-site-verification" content="es_xr6dMWi2YMLnQ8x9ge7Jaeo2I1nvt7oqgUDw1UtA" />
 
     <title>
-        @ViewData["Title"] - Money Miners
+        @(ViewData["SeoTitle"] ?? $"{ViewData["Title"]} - Money Miners")
     </title>
+
+    <meta name="description"
+          content="@(ViewData["MetaDescription"] ?? "Money Miners Investor Portal for secure investor account access, investment plan information and investor support.")" />
 
     <script type="importmap"></script>
 
