@@ -28,6 +28,13 @@
 
     <meta name="description"
           content="@(ViewData["MetaDescription"] ?? "Money Miners Investor Portal for secure investor account access, investment plan information and investor support.")" />
+     
+    @if (ViewData["CanonicalUrl"] is string canonicalUrl &&
+         !string.IsNullOrWhiteSpace(canonicalUrl))
+    {
+        <link rel="canonical" href="@canonicalUrl" />
+    }
+
 
     <script type="importmap"></script>
 
