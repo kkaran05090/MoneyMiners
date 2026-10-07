@@ -1322,6 +1322,322 @@
     }
 }
 
+/* =========================================================
+   MONEY MINERS - PREMIUM LIVE MARKET CARD
+   ========================================================= */
+
+.mm-market-card {
+    display: block;
+    cursor: pointer;
+    text-decoration: none !important;
+    color: inherit;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(.2,.8,.2,1), border-color 0.35s ease, box-shadow 0.4s ease;
+}
+
+
+    /* Premium glow */
+    .mm-market-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        border-radius: inherit;
+        background: radial-gradient( circle at 75% 110%, rgba(183, 227, 54, 0.18), transparent 52% );
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+
+
+    /* Moving light effect */
+    .mm-market-card::after {
+        content: "";
+        position: absolute;
+        top: -60%;
+        left: -70%;
+        width: 45%;
+        height: 220%;
+        z-index: 2;
+        background: linear-gradient( 90deg, transparent, rgba(220, 255, 120, 0.10), transparent );
+        transform: rotate(18deg);
+        opacity: 0;
+        pointer-events: none;
+    }
+
+
+    /* Existing content */
+    .mm-market-card > small,
+    .mm-market-card > strong,
+    .mm-market-card > .mm-performance-chart {
+        position: relative;
+        z-index: 3;
+    }
+
+
+/* =========================================================
+   PREMIUM POPUP
+   ========================================================= */
+
+.mm-market-popup {
+    position: absolute;
+    left: 13px;
+    right: 13px;
+    bottom: 13px;
+    z-index: 15;
+    min-height: 58px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 10px 12px;
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 13px;
+    background: linear-gradient( 135deg, rgba(9, 18, 13, 0.96), rgba(3, 10, 7, 0.94) );
+    box-shadow: 0 18px 35px rgba(0,0,0,0.48), inset 0 1px 0 rgba(255,255,255,0.07);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(16px) scale(0.96);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.4s cubic-bezier(.2,.8,.2,1);
+}
+
+
+    /* Thin premium accent line */
+    .mm-market-popup::before {
+        content: "";
+        position: absolute;
+        left: 12px;
+        right: 12px;
+        top: 0;
+        height: 1px;
+        background: linear-gradient( 90deg, transparent, rgba(183,227,54,0.80), transparent );
+    }
+
+
+/* Market icon */
+.mm-market-popup-icon {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: radial-gradient( circle, rgba(183,227,54,0.18), rgba(183,227,54,0.04) );
+    color: #dfff72;
+    font-size: 17px;
+    box-shadow: 0 0 20px rgba(183,227,54,0.12);
+}
+
+
+    /* Small live dot */
+    .mm-market-popup-icon::after {
+        content: "";
+        position: absolute;
+        width: 7px;
+        height: 7px;
+        right: 1px;
+        top: 2px;
+        border-radius: 50%;
+        background: #b7e336;
+        box-shadow: 0 0 9px rgba(183,227,54,0.85);
+        animation: mmLivePulse 1.5s ease-in-out infinite;
+    }
+
+
+/* Text area */
+.mm-market-popup-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+
+    /* BTC badge */
+    .mm-market-popup-text small {
+        display: inline-flex !important;
+        width: fit-content;
+        margin: 0 !important;
+        padding: 2px 6px;
+        border-radius: 20px;
+        background: rgba(183,227,54,0.09);
+        color: #b7e336 !important;
+        font-size: 0.48rem !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.9px !important;
+        line-height: 1.4;
+    }
+
+
+    /* Main text */
+    .mm-market-popup-text strong {
+        display: block !important;
+        margin: 0 !important;
+        color: #f5f7f5 !important;
+        font-size: 0.68rem !important;
+        font-weight: 700 !important;
+        line-height: 1.25;
+        white-space: normal !important;
+    }
+
+
+/* Arrow */
+.mm-market-popup-arrow {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    margin-left: auto;
+    border-radius: 50%;
+    background: rgba(183,227,54,0.10);
+    color: #dfff72;
+    font-size: 13px;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+
+/* =========================================================
+   DESKTOP HOVER
+   ========================================================= */
+
+@media (hover: hover) and (pointer: fine) {
+
+    .mm-market-card:hover {
+        transform: translateY(calc(-50% - 6px)) scale(1.025);
+        border-color: rgba(183,227,54,0.42);
+        box-shadow: 0 28px 60px rgba(0,0,0,0.55), 0 0 32px rgba(183,227,54,0.10), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+
+
+        .mm-market-card:hover::before {
+            opacity: 1;
+        }
+
+
+        .mm-market-card:hover::after {
+            opacity: 1;
+            animation: mmMarketShine 1.1s ease forwards;
+        }
+
+
+        .mm-market-card:hover .mm-market-popup {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+
+        .mm-market-card:hover .mm-performance-chart {
+            opacity: 0.20;
+            transform: scale(0.97);
+            filter: blur(0.4px);
+            transition: opacity 0.3s ease, transform 0.35s ease, filter 0.3s ease;
+        }
+
+
+        .mm-market-card:hover .mm-market-popup-arrow {
+            transform: translate(2px, -2px);
+            background: rgba(183,227,54,0.17);
+        }
+}
+
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes mmLivePulse {
+
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.45;
+        transform: scale(0.72);
+    }
+}
+
+
+@keyframes mmMarketShine {
+
+    from {
+        left: -70%;
+    }
+
+    to {
+        left: 135%;
+    }
+}
+
+
+/* =========================================================
+   MOBILE / TOUCH
+   ========================================================= */
+
+@media (hover: none), (pointer: coarse) {
+
+    .mm-market-popup {
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        min-height: 48px;
+        padding: 7px 8px;
+        gap: 7px;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+    }
+
+
+    .mm-market-popup-icon {
+        width: 30px;
+        height: 30px;
+        flex-basis: 30px;
+        font-size: 13px;
+    }
+
+
+    .mm-market-popup-text small {
+        font-size: 0.40rem !important;
+    }
+
+
+    .mm-market-popup-text strong {
+        font-size: 0.53rem !important;
+    }
+
+
+    .mm-market-popup-arrow {
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
+        animation: mmMobileArrow 1.7s ease-in-out infinite;
+    }
+
+
+    .mm-market-card .mm-performance-chart {
+        opacity: 0.25;
+    }
+}
+
+
+@keyframes mmMobileArrow {
+
+    0%, 100% {
+        transform: translate(0,0);
+    }
+
+    50% {
+        transform: translate(2px,-2px);
+    }
+}
+
 
 
 /* =========================================
@@ -1717,5 +2033,342 @@
 
     .mm-contact-submit {
         width: 100%;
+    }
+}
+
+
+/* =========================================================
+   MONEY MINERS - MARKET ENTRY CARD
+   ========================================================= */
+
+.mm-market-card {
+    min-height: 158px;
+    text-decoration: none !important;
+    color: #ffffff;
+    overflow: hidden;
+    cursor: pointer;
+    isolation: isolate;
+    transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+
+    /* subtle background glow */
+    .mm-market-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background: radial-gradient( circle at 50% 115%, rgba(183, 227, 54, 0.18), transparent 55% );
+        opacity: 0.7;
+    }
+
+
+    /* disable old shine if any */
+    .mm-market-card::after {
+        display: none !important;
+    }
+
+
+/* complete inner content */
+.mm-market-inner {
+    position: relative;
+    z-index: 2;
+    min-height: 126px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+
+/* LIVE MARKET badge */
+.mm-market-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    border: 1px solid rgba(183, 227, 54, 0.22);
+    border-radius: 999px;
+    background: rgba(183, 227, 54, 0.07);
+    color: #cfff55;
+    font-size: 0.56rem;
+    font-weight: 800;
+    letter-spacing: 1.15px;
+}
+
+
+/* live green dot */
+.mm-market-live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #b7e336;
+    box-shadow: 0 0 0 4px rgba(183, 227, 54, 0.08), 0 0 10px rgba(183, 227, 54, 0.8);
+    animation: mmMarketLivePulse 1.5s ease-in-out infinite;
+}
+
+
+/* Main question */
+.mm-market-message h3 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -0.2px;
+}
+
+
+/* second line */
+.mm-market-message p {
+    margin: 5px 0 13px;
+    color: rgba(225, 232, 227, 0.62);
+    font-size: 0.69rem;
+    font-weight: 500;
+}
+
+
+/* CLICK HERE button */
+.mm-market-click {
+    min-width: 125px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 0 15px;
+    border: 1px solid rgba(183, 227, 54, 0.55);
+    border-radius: 9px;
+    background: linear-gradient( 135deg, rgba(183, 227, 54, 0.14), rgba(183, 227, 54, 0.06) );
+    color: #dfff72;
+    font-size: 0.69rem;
+    font-weight: 800;
+    letter-spacing: 0.35px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 18px rgba(183, 227, 54, 0.08);
+    transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+    /* arrow */
+    .mm-market-click i {
+        font-size: 12px;
+        animation: mmMarketArrowBounce 1.5s ease-in-out infinite;
+    }
+
+
+/* =========================================================
+   DESKTOP HOVER
+   ========================================================= */
+
+@media (hover: hover) and (pointer: fine) {
+
+    .mm-market-card:hover {
+        transform: translateY(calc(-50% - 6px)) scale(1.02);
+        border-color: rgba(183, 227, 54, 0.45);
+        box-shadow: 0 28px 55px rgba(0, 0, 0, 0.55), 0 0 28px rgba(183, 227, 54, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    }
+
+
+        .mm-market-card:hover .mm-market-click {
+            color: #071006;
+            background: #b7e336;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(183, 227, 54, 0.22);
+        }
+
+
+        .mm-market-card:hover .mm-market-message h3 {
+            color: #dfff72;
+        }
+}
+
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes mmMarketLivePulse {
+
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.45;
+        transform: scale(0.75);
+    }
+}
+
+
+@keyframes mmMarketArrowBounce {
+
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(3px);
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 576px) {
+
+    .mm-market-card {
+        min-height: 130px;
+    }
+
+    .mm-market-inner {
+        min-height: 106px;
+    }
+
+    .mm-market-live {
+        margin-bottom: 7px;
+        padding: 4px 8px;
+        font-size: 0.46rem;
+    }
+
+    .mm-market-message h3 {
+        font-size: 0.83rem;
+    }
+
+    .mm-market-message p {
+        margin: 4px 0 9px;
+        font-size: 0.56rem;
+    }
+
+    .mm-market-click {
+        min-width: 105px;
+        height: 29px;
+        padding: 0 11px;
+        font-size: 0.58rem;
+    }
+}
+
+
+/* =========================================================
+   MARKET CARD - FINAL TEXT & BUTTON POLISH
+   ========================================================= */
+
+.mm-market-message h3 {
+    color: #ffffff;
+    font-size: 1.08rem;
+    font-weight: 850;
+    letter-spacing: -0.25px;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45), 0 0 18px rgba(183, 227, 54, 0.05);
+}
+
+.mm-market-message p {
+    color: rgba(232, 238, 233, 0.68);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.05px;
+}
+
+
+/* Premium glass button */
+.mm-market-click {
+    position: relative;
+    overflow: hidden;
+    min-width: 128px;
+    height: 35px;
+    border: 1px solid rgba(183, 227, 54, 0.55);
+    border-radius: 10px;
+    background: linear-gradient( 135deg, rgba(183, 227, 54, 0.12), rgba(183, 227, 54, 0.035) );
+    color: #dfff72;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 7px 18px rgba(0, 0, 0, 0.22), 0 0 18px rgba(183, 227, 54, 0.07);
+    transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+    /* soft shine */
+    .mm-market-click::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -70%;
+        width: 45%;
+        height: 100%;
+        background: linear-gradient( 90deg, transparent, rgba(255, 255, 255, 0.16), transparent );
+        transform: skewX(-20deg);
+        transition: left 0.55s ease;
+    }
+
+
+    /* text stays above shine */
+    .mm-market-click span,
+    .mm-market-click i {
+        position: relative;
+        z-index: 2;
+    }
+
+
+    /* stop old arrow bounce */
+    .mm-market-click i {
+        font-size: 12px;
+        animation: mmMarketArrowBlink 1.2s ease-in-out infinite;
+        transition: transform 0.3s ease;
+    }
+
+@keyframes mmMarketArrowBlink {
+
+    0%, 100% {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+
+    50% {
+        opacity: 0.35;
+        transform: translate(2px, -2px);
+    }
+}
+
+
+/* desktop hover */
+@media (hover: hover) and (pointer: fine) {
+
+    .mm-market-card:hover .mm-market-message h3 {
+        color: #dfff72;
+    }
+
+    .mm-market-card:hover .mm-market-click {
+        transform: translateY(-2px);
+        border-color: rgba(211, 255, 86, 0.85);
+        background: linear-gradient( 135deg, rgba(183, 227, 54, 0.20), rgba(183, 227, 54, 0.08) );
+        color: #efffb5;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10), 0 9px 24px rgba(0, 0, 0, 0.30), 0 0 24px rgba(183, 227, 54, 0.15);
+    }
+
+        .mm-market-card:hover .mm-market-click::before {
+            left: 130%;
+        }
+
+        .mm-market-card:hover .mm-market-click i {
+            transform: translate(3px, -3px);
+        }
+}
+
+
+/* mobile */
+@media (max-width: 576px) {
+
+    .mm-market-message h3 {
+        font-size: 0.84rem;
+    }
+
+    .mm-market-message p {
+        font-size: 0.55rem;
+    }
+
+    .mm-market-click {
+        min-width: 108px;
+        height: 30px;
     }
 }
