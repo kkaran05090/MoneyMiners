@@ -224,3 +224,16 @@ main {
     background: transparent;
     white-space: nowrap;
 }
+
+/* Mobile Investor Notification Dropdown */
+@media (max-width: 576px) {
+
+    .mm-investor-notification-dropdown {
+        left: 0 !important;
+        right: auto !important;
+        width: min(350px, calc(100vw - 72px)) !important;
+        max-width: calc(100vw - 72px);
+        box-sizing: border-box;
+        z-index: 1000;
+    }
+}
