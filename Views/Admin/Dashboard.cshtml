@@ -233,6 +233,46 @@
     }
 
 
+    
+    <!-- Notification Management -->
+    @if (isSuperAdmin)
+    {
+        <a asp-controller="AdminNotification"
+           asp-action="Index"
+           class="mm-dashboard-card">
+
+            <div class="mm-dashboard-card-icon">
+                <i class="bi bi-bell-fill"></i>
+            </div>
+
+            <div>
+
+                <span class="mm-dashboard-card-label">
+                    COMMUNICATION MANAGEMENT
+                </span>
+
+                <h2>
+                    Manage Notifications
+                </h2>
+
+                <p>
+                    Create, publish and manage important
+                    notifications and announcements
+                    for Money Miners investors.
+                </p>
+
+            </div>
+
+            <span class="mm-dashboard-card-action">
+                Manage Notifications
+                <i class="bi bi-arrow-right"></i>
+            </span>
+
+        </a>
+    }
+
+
+
     <!-- Payments -->
     <article class="mm-dashboard-card is-coming-soon">
 

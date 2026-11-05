@@ -181,6 +181,22 @@
 
                     </a>
 
+
+                    
+                    <!-- Notification Management -->
+                    <a asp-controller="AdminNotification"
+                       asp-action="Index"
+                       class="mm-admin-nav-link
+                        @(currentController == "AdminNotification"
+                           ? "is-active"
+                           : "")">
+
+                        <i class="bi bi-bell-fill"></i>
+                        <span>Manage Notifications</span>
+
+                    </a>
+
+
                     <span class="mm-admin-nav-link is-disabled">
 
                         <i class="bi bi-gear"></i>

@@ -1,0 +1,480 @@
+﻿@model IReadOnlyList<MoneyMiners.Models.Notification>
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Manage Notifications";
+}
+
+<style>
+    /* Scoped styling: affects this page only, not the shared admin dashboard. */
+    .mm-notify-page {
+        max-width: 1340px;
+        margin: 0 auto;
+        color: #f3f7ee;
+    }
+
+    .mm-notify-heading {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 26px;
+    }
+
+    .mm-notify-eyebrow {
+        color: #b7f000;
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin: 0 0 8px;
+    }
+
+    .mm-notify-heading h1 {
+        margin: 0 0 8px;
+        color: #fff;
+        font-size: clamp(1.5rem, 2.4vw, 2rem);
+        font-weight: 750;
+    }
+
+    .mm-notify-heading p {
+        margin: 0;
+        color: #a2ad9e;
+        font-size: 0.92rem;
+    }
+
+    .mm-notify-count {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        border: 1px solid #3a5121;
+        background: #14210d;
+        border-radius: 12px;
+        padding: 11px 15px;
+        color: #c7f583;
+        font-size: 0.88rem;
+        font-weight: 700;
+    }
+
+    .mm-notify-panel {
+        border: 1px solid #2a3e1e;
+        border-radius: 16px;
+        background: #0d170d;
+        overflow: hidden;
+        margin-bottom: 24px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, .13);
+    }
+
+    .mm-notify-panel-head {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 19px 22px;
+        background: #111e10;
+        border-bottom: 1px solid #2a3e1e;
+    }
+
+    .mm-notify-panel-icon {
+        display: inline-grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        flex: 0 0 40px;
+        border-radius: 10px;
+        border: 1px solid #47671c;
+        background: #21320d;
+        color: #b7f000;
+        font-size: 1.1rem;
+    }
+
+    .mm-notify-panel-head h2 {
+        color: #f7fbf3;
+        margin: 0 0 3px;
+        font-size: 1.07rem;
+        font-weight: 750;
+    }
+
+    .mm-notify-panel-head p {
+        margin: 0;
+        color: #99a795;
+        font-size: 0.79rem;
+    }
+
+    .mm-notify-form-area {
+        max-width: 920px;
+        padding: 24px 22px 26px;
+    }
+
+    .mm-notify-label {
+        display: block;
+        margin-bottom: 9px;
+        color: #d6e3d2;
+        font-size: 0.87rem;
+        font-weight: 650;
+    }
+
+    .mm-notify-field {
+        display: block;
+        width: 100%;
+        border: 1px solid #354630;
+        background: #070e08;
+        color: #f9fff5;
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 0.94rem;
+        outline: none;
+        transition: border-color .15s, box-shadow .15s;
+    }
+
+        .mm-notify-field:focus {
+            border-color: #b7f000;
+            box-shadow: 0 0 0 3px rgba(183, 240, 0, .12);
+        }
+
+        .mm-notify-field::placeholder {
+            color: #778873;
+        }
+
+        .mm-notify-field textarea {
+            resize: vertical;
+        }
+
+    .mm-notify-field-group {
+        margin-bottom: 19px;
+    }
+
+    .mm-notify-hint {
+        display: block;
+        margin-top: 7px;
+        font-size: 0.76rem;
+        color: #82917f;
+    }
+
+    .mm-notify-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        border: 0;
+        border-radius: 9px;
+        padding: 11px 18px;
+        font-weight: 750;
+        font-size: 0.87rem;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .mm-notify-button-primary {
+        background: #b7f000;
+        color: #101a07;
+    }
+
+        .mm-notify-button-primary:hover {
+            background: #d0ff44;
+            color: #101a07;
+        }
+
+    .mm-notify-button-publish {
+        background: #1b6e45;
+        color: #fff;
+        padding: 8px 11px;
+        font-size: 0.78rem;
+    }
+
+        .mm-notify-button-publish:hover {
+            background: #238e59;
+        }
+
+    .mm-notify-button-delete {
+        background: #4d1c24;
+        border: 1px solid #79313a;
+        color: #ffb5b9;
+        padding: 8px 11px;
+        font-size: 0.78rem;
+    }
+
+        .mm-notify-button-delete:hover {
+            background: #712934;
+        }
+
+    .mm-notify-table-wrap {
+        overflow-x: auto;
+        padding: 16px 18px 20px;
+    }
+
+    .mm-notify-table {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+        min-width: 780px;
+        font-size: 0.86rem;
+    }
+
+        .mm-notify-table th {
+            color: #b7f000;
+            background: #14220f;
+            font-weight: 750;
+            text-align: left;
+            padding: 14px 13px;
+            border-bottom: 1px solid #314827;
+            white-space: nowrap;
+        }
+
+        .mm-notify-table td {
+            padding: 16px 13px;
+            border-bottom: 1px solid #253525;
+            vertical-align: top;
+            color: #e1e9db;
+        }
+
+        .mm-notify-table tbody tr:hover {
+            background: #101d10;
+        }
+
+        .mm-notify-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .mm-notify-table .mm-notify-title-cell {
+            font-weight: 700;
+            color: #f7fbf4;
+            min-width: 165px;
+        }
+
+        .mm-notify-table .mm-notify-message-cell {
+            max-width: 490px;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            line-height: 1.6;
+        }
+
+        .mm-notify-table .mm-notify-date-cell {
+            white-space: nowrap;
+            color: #a5b3a0;
+        }
+
+    .mm-notify-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border-radius: 6px;
+        padding: 5px 9px;
+        font-size: .73rem;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    .mm-notify-status-published {
+        background: #153d29;
+        color: #8bebb4;
+    }
+
+    .mm-notify-status-draft {
+        background: #3c3213;
+        color: #f2db88;
+    }
+
+    .mm-notify-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+    }
+
+        .mm-notify-actions form {
+            margin: 0;
+        }
+
+    .mm-notify-flash {
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-bottom: 18px;
+        font-size: .9rem;
+    }
+
+    .mm-notify-flash-success {
+        border: 1px solid #247b49;
+        background: #10291b;
+        color: #a9edbe;
+    }
+
+    .mm-notify-flash-error {
+        border: 1px solid #91414a;
+        background: #2a1418;
+        color: #ffc2c8;
+    }
+
+    .mm-notify-empty {
+        text-align: center;
+        color: #9daf99 !important;
+        padding: 32px 12px !important;
+    }
+
+    @@media (max-width: 640px) {
+        .mm-notify-panel-head {
+            padding: 16px;
+        }
+
+        .mm-notify-form-area {
+            padding: 20px 16px;
+        }
+
+        .mm-notify-table-wrap {
+            padding: 12px;
+        }
+    }
+</style>
+
+<div class="mm-notify-page">
+    <div class="mm-notify-heading">
+        <div>
+            <div class="mm-notify-eyebrow">Investor Communications</div>
+            <h1>Notification Management</h1>
+            <p>Create announcements and manage what investors see on their dashboard.</p>
+        </div>
+        <div class="mm-notify-count">
+            <i class="bi bi-bell-fill"></i>
+            <span>@Model.Count Total Notifications</span>
+        </div>
+    </div>
+
+    @if (TempData["AdminSuccess"] != null)
+    {
+        <div class="mm-notify-flash mm-notify-flash-success" role="status">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["AdminSuccess"]
+        </div>
+    }
+
+    @if (TempData["AdminError"] != null)
+    {
+        <div class="mm-notify-flash mm-notify-flash-error" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["AdminError"]
+        </div>
+    }
+
+    <section class="mm-notify-panel" aria-labelledby="create-notify-heading">
+        <div class="mm-notify-panel-head">
+            <span class="mm-notify-panel-icon"><i class="bi bi-plus-circle"></i></span>
+            <div>
+                <h2 id="create-notify-heading">Create Notification</h2>
+                <p>New notifications are saved as drafts until you publish them.</p>
+            </div>
+        </div>
+
+        <div class="mm-notify-form-area">
+            <form method="post" action="@Url.Action("Create", "AdminNotification")">
+                @Html.AntiForgeryToken()
+
+                <div class="mm-notify-field-group">
+                    <label for="notificationTitle" class="mm-notify-label">Notification Title</label>
+                    <input id="notificationTitle"
+                           type="text"
+                           name="title"
+                           class="mm-notify-field"
+                           placeholder="Enter notification title"
+                           maxlength="200"
+                           required />
+                </div>
+
+                <div class="mm-notify-field-group">
+                    <label for="notificationMessage" class="mm-notify-label">Message</label>
+                    <textarea id="notificationMessage"
+                              name="message"
+                              class="mm-notify-field"
+                              rows="4"
+                              placeholder="Write the message investors will receive..."
+                              maxlength="2000"
+                              required></textarea>
+                    <small class="mm-notify-hint">Maximum 2,000 characters.</small>
+                </div>
+
+                <button type="submit" class="mm-notify-button mm-notify-button-primary">
+                    <i class="bi bi-plus-lg"></i>
+                    Create Notification
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <section class="mm-notify-panel" aria-labelledby="all-notify-heading">
+        <div class="mm-notify-panel-head">
+            <span class="mm-notify-panel-icon"><i class="bi bi-list-ul"></i></span>
+            <div>
+                <h2 id="all-notify-heading">All Notifications</h2>
+                <p>Publish drafts or remove announcements you no longer need.</p>
+            </div>
+        </div>
+
+        <div class="mm-notify-table-wrap">
+            <table class="mm-notify-table">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Message</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Created (UTC)</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var notification in Model)
+                    {
+                        <tr>
+                            <td>@notification.NotificationID</td>
+                            <td class="mm-notify-title-cell">@notification.Title</td>
+                            <td class="mm-notify-message-cell">@notification.Message</td>
+                            <td>
+                                @if (notification.IsPublished)
+                                {
+                                    <span class="mm-notify-status mm-notify-status-published">
+                                        <i class="bi bi-check-circle-fill"></i> Published
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="mm-notify-status mm-notify-status-draft">
+                                        <i class="bi bi-pencil-square"></i> Draft
+                                    </span>
+                                }
+                            </td>
+                            <td class="mm-notify-date-cell">
+                                @notification.CreatedAtUtc.ToString("dd MMM yyyy HH:mm")
+                            </td>
+                            <td>
+                                <div class="mm-notify-actions">
+                                    @if (!notification.IsPublished)
+                                    {
+                                        <form method="post" action="@Url.Action("Publish", "AdminNotification")">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="notificationId" value="@notification.NotificationID" />
+                                            <button type="submit" class="mm-notify-button mm-notify-button-publish">
+                                                <i class="bi bi-send-fill"></i> Publish
+                                            </button>
+                                        </form>
+                                    }
+
+                                    <form method="post"
+                                          action="@Url.Action("Delete", "AdminNotification")"
+                                          onsubmit="return confirm('Delete this notification?');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="notificationId" value="@notification.NotificationID" />
+                                        <button type="submit" class="mm-notify-button mm-notify-button-delete">
+                                            <i class="bi bi-trash3"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    @if (Model.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="6" class="mm-notify-empty">No notifications found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>

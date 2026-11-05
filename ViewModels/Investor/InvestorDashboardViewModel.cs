@@ -1,4 +1,5 @@
-﻿using MoneyMiners.Models;
+﻿
+using MoneyMiners.Models;
 
 namespace MoneyMiners.ViewModels.Investor
 {
@@ -27,5 +28,22 @@ namespace MoneyMiners.ViewModels.Investor
             ActiveInvestments.Sum(
                 investment =>
                     investment.InvestedAmount);
+
+        // ================================
+        // Investor Notifications
+        // ================================
+
+        public IReadOnlyList<Notification>
+            PublishedNotifications
+        { get; set; } =
+                Array.Empty<Notification>();
+
+        public int UnreadNotificationCount
+        { get; set; }
+
+
+        public IReadOnlySet<long> ReadNotificationIds { get; set; }
+            = new HashSet<long>();
+
     }
 }

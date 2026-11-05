@@ -111,6 +111,13 @@ builder.Services.AddScoped<
     InvestorOtpRepository>();
 
 
+// Notification Repository
+builder.Services.AddScoped<
+    INotificationRepository,
+    NotificationRepository>();
+
+
+
 // Investor Email OTP repository
 builder.Services.AddScoped<
     IInvestorEmailOtpRepository,
